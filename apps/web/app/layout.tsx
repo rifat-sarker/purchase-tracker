@@ -1,21 +1,23 @@
 import type { Metadata } from "next";
-import { Inter, Outfit } from "next/font/google";
+import { Archivo, IBM_Plex_Mono } from "next/font/google";
 import StoreProvider from "@/lib/StoreProvider";
 import "./globals.css";
 
-const inter = Inter({
-  variable: "--font-inter",
+const archivo = Archivo({
+  variable: "--font-heading",
   subsets: ["latin"],
+  weight: ["400", "600", "800"],
 });
 
-const outfit = Outfit({
-  variable: "--font-outfit",
+const plexMono = IBM_Plex_Mono({
+  variable: "--font-mono",
   subsets: ["latin"],
+  weight: ["400", "500"],
 });
 
 export const metadata: Metadata = {
-  title: "Gadget Purchase Tracker",
-  description: "Track your personal tech gadget purchases.",
+  title: "Gadget Tracker",
+  description: "A single-owner log of every tech gadget purchase — public catalog, owner-only dashboard.",
 };
 
 export default function RootLayout({
@@ -24,15 +26,12 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className="dark">
+    <html lang="en" style={{ ["--font-body" as string]: "var(--font-heading)" }}>
       <body
-        className={`${inter.variable} ${outfit.variable} font-sans min-h-screen antialiased bg-[#0a0a0a] text-slate-50 selection:bg-indigo-500/30`}
+        className={`${archivo.variable} ${plexMono.variable} min-h-screen antialiased`}
+        style={{ background: "var(--color-bg)", color: "var(--color-text)" }}
       >
-        <StoreProvider>
-          {/* Background Gradient Effects */}
-          <div className="fixed inset-0 z-[-1] bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-indigo-900/20 via-[#0a0a0a] to-[#0a0a0a]"></div>
-          {children}
-        </StoreProvider>
+        <StoreProvider>{children}</StoreProvider>
       </body>
     </html>
   );
