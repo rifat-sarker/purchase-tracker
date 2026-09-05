@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import type { RootState } from '@/lib/store';
-import { setCredentials, logout as logoutAction } from '@/lib/features/authSlice';
+import { setCredentials, logout as logoutAction, clearSessionExpiredNotice } from '@/lib/features/authSlice';
 import {
   productsApi,
   useLoginMutation,
@@ -115,6 +115,20 @@ function StatusNote({ children, tone = 'muted' }: { children: React.ReactNode; t
   );
 }
 
+function AlertModal({ title, message, onClose }: { title: string; message: string; onClose: () => void }) {
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-5 bg-[rgba(0,0,0,0.6)] backdrop-blur-sm">
+      <div className="bg-[var(--color-bg)] border-[3px] p-7 md:p-10 max-w-md w-full shadow-[8px_8px_0_0_rgba(0,0,0,1)]" style={{ borderColor: 'var(--color-accent)' }}>
+        <h2 className="text-[24px] md:text-[28px] leading-[1.1] font-[var(--font-heading)] font-extrabold mb-4" style={{ color: 'var(--color-accent)' }}>{title}</h2>
+        <p className="text-[15px] mb-8" style={{ color: 'color-mix(in srgb, var(--color-text) 70%, transparent)' }}>{message}</p>
+        <div className="flex justify-end">
+          <button className="btn btn-primary" style={{ background: 'var(--color-accent)', color: 'var(--color-bg)', borderColor: 'var(--color-accent)' }} onClick={onClose}>OK</button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 function LoadingSpinner({ label = 'Loading' }: { label?: string }) {
   return (
     <div className="flex flex-col items-center justify-center p-12 w-full h-full gap-5 opacity-80 min-h-[200px]">
@@ -130,6 +144,7 @@ export default function GadgetTracker() {
   const dispatch = useDispatch();
   const isAuthenticated = useSelector((s: RootState) => s.auth.isAuthenticated);
   const accessToken = useSelector((s: RootState) => s.auth.accessToken);
+  const sessionExpiredNotice = useSelector((s: RootState) => s.auth.sessionExpiredNotice);
   const owner = isAuthenticated;
 
   const [screen, setScreen] = useState<Screen>('catalog');
@@ -145,8 +160,7 @@ export default function GadgetTracker() {
   const [uploadFiles, setUploadFiles] = useState<File[]>([]);
   const [loginEmail, setLoginEmail] = useState('');
   const [loginPassword, setLoginPassword] = useState('');
-  const [loginError, setLoginError] = useState('');
-  const [saveError, setSaveError] = useState('');
+  const [errorModal, setErrorModal] = useState<string | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 6;
 
@@ -156,7 +170,7 @@ export default function GadgetTracker() {
   }, [search]);
   useEffect(() => { setCurrentPage(1); }, [debouncedSearch, category, sort]);
 
-  const go = (s: Screen) => { setScreen(s); setLoginError(''); setSaveError(''); };
+  const go = (s: Screen) => { setScreen(s); };
 
   // ─── data: paginated + filtered catalog grid ───
   const catalogQuery = useGetProductsQuery({
@@ -196,7 +210,6 @@ export default function GadgetTracker() {
     setForm(p ? formFor(p) : blankForm());
     setSpecRows(p ? Object.entries(p.specs).map(([key, value]) => ({ key, value })) : [{ key: '', value: '' }]);
     setUploadFiles([]);
-    setSaveError('');
     go('form');
   };
 
@@ -205,7 +218,7 @@ export default function GadgetTracker() {
 
   const saveEntry = async () => {
     if (!form.name.trim() || !form.purchaseDate || !(Number(form.price) > 0)) {
-      setSaveError('Name, category, a positive price, and a purchase date are required.');
+      setErrorModal('Name, category, a positive price, and a purchase date are required.');
       return;
     }
     try {
@@ -214,7 +227,7 @@ export default function GadgetTracker() {
       else await createProduct(fd).unwrap();
       go('dashboard');
     } catch (err) {
-      setSaveError(apiErrorMessage(err, 'Could not save this entry — is the API running?'));
+      setErrorModal(apiErrorMessage(err, 'Could not save this entry — is the API running?'));
     }
   };
 
@@ -225,21 +238,25 @@ export default function GadgetTracker() {
       setConfirmDelete(false);
       go('dashboard');
     } catch (err) {
-      setSaveError(apiErrorMessage(err, 'Could not delete this entry.'));
       setConfirmDelete(false);
+      setErrorModal(apiErrorMessage(err, 'Could not delete this entry.'));
     }
   };
 
   const markSold = async (id: string) => {
     const fd = new FormData();
     fd.append('status', 'SOLD');
-    try { await updateProduct({ id, formData: fd }).unwrap(); } catch { /* surfaced via query error state elsewhere */ }
+    try {
+      await updateProduct({ id, formData: fd }).unwrap();
+    } catch (err) {
+      setErrorModal(apiErrorMessage(err, 'Could not mark this entry as sold.'));
+    }
   };
 
-  const exportCsv = () => { downloadProductsCsv(accessToken).catch(() => setSaveError('CSV export failed.')); };
+  const exportCsv = () => { downloadProductsCsv(accessToken).catch(() => setErrorModal('CSV export failed.')); };
 
   const doLogin = async () => {
-    if (!loginEmail.trim() || !loginPassword.trim()) { setLoginError('Email and password are required.'); return; }
+    if (!loginEmail.trim() || !loginPassword.trim()) { setErrorModal('Email and password are required.'); return; }
     try {
       const { accessToken: token } = await loginMutation({ email: loginEmail, password: loginPassword }).unwrap();
       dispatch(setCredentials({ accessToken: token }));
@@ -248,10 +265,9 @@ export default function GadgetTracker() {
       // keep serving their pre-login (public-shaped) cached data instead of
       // refetching with the new Authorization header.
       dispatch(productsApi.util.invalidateTags(['Product', 'Analytics']));
-      setLoginError('');
       go('dashboard');
     } catch (err) {
-      setLoginError(apiErrorMessage(err, 'Invalid email or password.'));
+      setErrorModal(apiErrorMessage(err, 'Invalid email or password.'));
     }
   };
 
@@ -448,7 +464,6 @@ export default function GadgetTracker() {
             <button className="btn btn-ghost" onClick={() => go('catalog')}>
               <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="m15 18-6-6 6-6" /></svg>Catalog
             </button>
-            <span className="font-mono text-[11px]" style={{ color: 'color-mix(in srgb, var(--color-text) 50%, transparent)' }}>{detailId}</span>
           </div>
           {detailQuery.isLoading ? (
             <LoadingSpinner label="Loading entry…" />
@@ -562,7 +577,6 @@ export default function GadgetTracker() {
               <label>Password</label>
               <input className="input" type="password" value={loginPassword} onChange={(e) => setLoginPassword(e.target.value)} onKeyDown={(e) => { if (e.key === 'Enter') doLogin(); }} />
             </div>
-            {loginError && <div className="text-xs mb-3" style={{ color: 'var(--color-accent)' }}>{loginError}</div>}
             <button className="btn btn-primary btn-block" onClick={doLogin} disabled={loggingIn}>{loggingIn ? 'Signing in…' : 'Sign in as owner'}</button>
             <button className="btn btn-secondary btn-block" onClick={() => go('catalog')}>Back to public catalog</button>
           </div>
@@ -589,7 +603,6 @@ export default function GadgetTracker() {
               </button>
             </div>
           </section>
-          {saveError && <div className="px-5 py-2 text-xs font-mono" style={{ color: 'var(--color-accent)' }}>{saveError}</div>}
           {allProductsQuery.isLoading ? (
             <LoadingSpinner label="Loading purchase log…" />
           ) : (
@@ -654,7 +667,6 @@ export default function GadgetTracker() {
               <button className="btn btn-primary" onClick={saveEntry} disabled={saving}>{saving ? 'Saving…' : 'Save entry'}</button>
             </div>
           </section>
-          {saveError && <div className="px-5 py-2 text-xs font-mono border-b-2" style={{ color: 'var(--color-accent)', ...dividerColor }}>{saveError}</div>}
           <section className="grid grid-cols-1 md:grid-cols-[1.2fr_1fr] border-b-2" style={dividerColor}>
             <div className="p-5 md:border-r-2" style={dividerColor}>
               <h6 className="mb-4">Identity</h6>
@@ -904,6 +916,18 @@ export default function GadgetTracker() {
             </div>
           </div>
         </div>
+      )}
+
+      {/* ── ERROR / NOTICE MODAL — same visual style as the delete confirm above,
+          used for every surfaced error in the app (save/delete/login/CSV
+          failures, and session-expiry) so error reporting is consistent. ── */}
+      {errorModal && <AlertModal title="Something went wrong" message={errorModal} onClose={() => setErrorModal(null)} />}
+      {sessionExpiredNotice && (
+        <AlertModal
+          title="Session expired"
+          message={sessionExpiredNotice}
+          onClose={() => { dispatch(clearSessionExpiredNotice()); go('login'); }}
+        />
       )}
     </div>
   );

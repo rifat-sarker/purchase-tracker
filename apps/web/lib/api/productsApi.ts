@@ -1,5 +1,7 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
+import type { BaseQueryFn, FetchArgs, FetchBaseQueryError } from '@reduxjs/toolkit/query/react';
 import type { RootState } from '../store';
+import { setCredentials, sessionExpired } from '../features/authSlice';
 
 export const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:4000/api/v1';
 export const API_ORIGIN = API_BASE_URL.replace(/\/api\/v1\/?$/, '');
@@ -94,23 +96,67 @@ export interface UpcomingWarrantyItem {
   warrantyNotified: boolean;
 }
 
+const rawBaseQuery = fetchBaseQuery({
+  baseUrl: API_BASE_URL,
+  // Needed so the httpOnly refresh-token cookie set by /auth/login travels
+  // with /auth/refresh and /auth/logout requests.
+  credentials: 'include',
+  // Hard ceiling on every request — a hung connection (cold serverless
+  // function, flaky network hop) aborts and surfaces as a normal RTK
+  // Query error instead of leaving a screen stuck in "Loading…" forever.
+  timeout: 15000,
+  prepareHeaders: (headers, { getState }) => {
+    const token = (getState() as RootState).auth.accessToken;
+    if (token) headers.set('authorization', `Bearer ${token}`);
+    return headers;
+  },
+});
+
+// Access tokens are short-lived (15m). Without this, an owner mid-session
+// would silently start getting 401s / public-shaped data the moment the
+// token expired — looking exactly like an unexplained random logout, with
+// no error shown. This retries once through /auth/refresh (de-duplicated
+// so N simultaneous 401s only trigger one refresh call) before giving up;
+// only then does it actually clear the session, with a visible reason.
+let refreshPromise: Promise<string | null> | null = null;
+
+const baseQueryWithReauth: BaseQueryFn<string | FetchArgs, unknown, FetchBaseQueryError> = async (args, api, extraOptions) => {
+  const result = await rawBaseQuery(args, api, extraOptions);
+
+  if (result.error?.status !== 401) return result;
+
+  const url = typeof args === 'string' ? args : args.url;
+  if (url.includes('/auth/login') || url.includes('/auth/refresh')) return result;
+
+  const wasAuthenticated = (api.getState() as RootState).auth.isAuthenticated;
+  if (!wasAuthenticated) return result;
+
+  if (!refreshPromise) {
+    refreshPromise = (async () => {
+      const refreshResult = await rawBaseQuery({ url: '/auth/refresh', method: 'POST' }, api, extraOptions);
+      const token = (refreshResult.data as { data?: { accessToken: string } } | undefined)?.data?.accessToken;
+      if (token) {
+        api.dispatch(setCredentials({ accessToken: token }));
+        return token;
+      }
+      return null;
+    })().finally(() => { refreshPromise = null; });
+  }
+
+  const newToken = await refreshPromise;
+  if (newToken) return rawBaseQuery(args, api, extraOptions);
+
+  api.dispatch(sessionExpired('Your session has expired. Please sign in again.'));
+  // Drop any owner-shaped cached responses fetched before the session died —
+  // otherwise a stale cache entry could still render sensitive fields after
+  // the user has effectively been logged out.
+  api.dispatch(productsApi.util.invalidateTags(['Product', 'Analytics']));
+  return result;
+};
+
 export const productsApi = createApi({
   reducerPath: 'productsApi',
-  baseQuery: fetchBaseQuery({
-    baseUrl: API_BASE_URL,
-    // Needed so the httpOnly refresh-token cookie set by /auth/login travels
-    // with /auth/refresh and /auth/logout requests.
-    credentials: 'include',
-    // Hard ceiling on every request — a hung connection (cold serverless
-    // function, flaky network hop) aborts and surfaces as a normal RTK
-    // Query error instead of leaving a screen stuck in "Loading…" forever.
-    timeout: 15000,
-    prepareHeaders: (headers, { getState }) => {
-      const token = (getState() as RootState).auth.accessToken;
-      if (token) headers.set('authorization', `Bearer ${token}`);
-      return headers;
-    },
-  }),
+  baseQuery: baseQueryWithReauth,
   tagTypes: ['Product', 'Analytics'],
   // Auto-refetch active queries when the tab regains focus or the network
   // comes back — paired with setupListeners(store.dispatch) in store.ts.

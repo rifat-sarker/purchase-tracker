@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
-import { useRefreshMutation } from './api/productsApi';
+import { productsApi, useRefreshMutation } from './api/productsApi';
 import { setCredentials } from './features/authSlice';
 
 /**
@@ -28,7 +28,15 @@ export default function AuthBootstrap({ children }: { children: React.ReactNode 
 
     refresh()
       .unwrap()
-      .then((data) => { if (!cancelled) dispatch(setCredentials({ accessToken: data.accessToken })); })
+      .then((data) => {
+        if (cancelled) return;
+        dispatch(setCredentials({ accessToken: data.accessToken }));
+        // If the 4s ceiling already fired and rendered the public view,
+        // this refetches with the now-valid token instead of leaving the
+        // owner stuck looking logged-out until they manually reload —
+        // the exact "sometimes shows me as logged out" symptom this fixes.
+        dispatch(productsApi.util.invalidateTags(['Product', 'Analytics']));
+      })
       .catch(() => { /* no valid refresh cookie, or the request failed — stay a public visitor */ })
       .finally(() => { clearTimeout(timeout); unblock(); });
 
