@@ -205,9 +205,8 @@ export default function GadgetTracker() {
 
   return (
     <div className="h-screen w-screen overflow-hidden flex flex-col" style={{ background: 'var(--color-bg)', color: 'var(--color-text)' }}>
-      {/* ── header / nav (persists across every screen — this is the single page) ── */}
-      <header className="flex flex-col sm:flex-row sm:items-stretch border-b-2 sticky top-0 z-10" style={{ ...dividerColor, background: 'var(--color-bg)' }}>
-        <div className="flex items-baseline gap-2.5 px-5 py-3.5 sm:border-r-2 sm:min-w-[240px]" style={dividerColor}>
+      <header className="flex flex-col lg:flex-row lg:items-stretch border-b-2 sticky top-0 z-20 bg-[var(--color-bg)]" style={dividerColor}>
+        <div className="flex items-baseline gap-2.5 px-5 py-3 lg:border-r-2 shrink-0" style={dividerColor}>
           <span className="font-[var(--font-heading)] font-extrabold text-lg tracking-tight">GADGET&nbsp;TRACKER</span>
           <span className="font-mono text-[10px]" style={{ color: 'var(--color-accent)' }}>v1.1</span>
         </div>
@@ -216,19 +215,39 @@ export default function GadgetTracker() {
             <button
               key={label}
               onClick={() => go(s)}
-              className="border-0 bg-transparent cursor-pointer font-[var(--font-heading)] font-extrabold text-xs tracking-wider uppercase px-3 py-2.5 hover:[color:var(--color-accent)]"
+              className="border-0 bg-transparent cursor-pointer font-[var(--font-heading)] font-extrabold text-xs tracking-wider uppercase px-3 py-2.5 hover:[color:var(--color-accent)] shrink-0"
               style={{ color: screen === s ? 'var(--color-accent)' : 'var(--color-text)' }}
             >
               {label}
             </button>
           ))}
         </nav>
-        <div className="flex items-center gap-2.5 px-4 sm:border-l-2 py-2 sm:py-0" style={dividerColor}>
-          <span className="font-mono text-[10px] tracking-wider uppercase hidden sm:inline" style={{ color: 'color-mix(in srgb, var(--color-text) 55%, transparent)' }}>
+        
+        {/* Compact Simple Stats injected into header */}
+        <div className="hidden md:flex items-center gap-5 px-5 lg:border-l-2 shrink-0" style={dividerColor}>
+          <div className="flex items-baseline gap-1.5">
+            <span className="text-[9px] font-mono uppercase tracking-wider" style={{ color: 'color-mix(in srgb, var(--color-text) 55%, transparent)' }}>Items</span>
+            <span className="font-[var(--font-heading)] font-extrabold text-[14px]">{products.length}</span>
+          </div>
+          <div className="flex items-baseline gap-1.5">
+            <span className="text-[9px] font-mono uppercase tracking-wider" style={{ color: 'color-mix(in srgb, var(--color-text) 55%, transparent)' }}>Cats</span>
+            <span className="font-[var(--font-heading)] font-extrabold text-[14px]">{cats.length}</span>
+          </div>
+          <div className="flex items-baseline gap-1.5">
+            <span className="text-[9px] font-mono uppercase tracking-wider" style={{ color: 'color-mix(in srgb, var(--color-text) 55%, transparent)' }}>Spend</span>
+            <div className="flex items-center gap-1">
+              <span className="font-[var(--font-heading)] font-extrabold text-[14px]">{owner ? money(total) : mask()}</span>
+              {!owner && <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="var(--color-accent)" strokeWidth="2.5" className="shrink-0"><rect x="3" y="11" width="18" height="11" /><path d="M7 11V7a5 5 0 0 1 10 0v4" /></svg>}
+            </div>
+          </div>
+        </div>
+
+        <div className="flex items-center gap-2.5 px-4 lg:border-l-2 py-2 lg:py-0 shrink-0" style={dividerColor}>
+          <span className="font-mono text-[9px] tracking-wider uppercase hidden xl:inline" style={{ color: 'color-mix(in srgb, var(--color-text) 55%, transparent)' }}>
             {owner ? 'owner session' : 'public visitor'}
           </span>
           <button
-            className="btn btn-secondary text-xs"
+            className="btn btn-secondary text-[10px] px-2 py-1 h-auto min-h-0"
             onClick={() => { setOwner((o) => !o); go(owner ? 'catalog' : 'dashboard'); }}
           >
             {owner ? 'Sign out' : 'View as owner'}
@@ -242,29 +261,6 @@ export default function GadgetTracker() {
           {/* Subtle background image pattern for the entire catalog */}
           <div className="absolute inset-0 z-0 opacity-5 pointer-events-none" style={{ backgroundImage: 'url("https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=2000&q=80")', backgroundSize: 'cover', backgroundPosition: 'center' }}></div>
 
-          <section className="flex flex-col sm:flex-row items-start sm:items-center justify-between border-b-2 shrink-0 z-10 bg-[var(--color-bg)] px-5 py-3 gap-4" style={dividerColor}>
-            <div>
-              <div className="font-mono text-[10px] tracking-widest uppercase mb-1" style={{ color: 'var(--color-accent)' }}>Public catalog</div>
-              <h1 className="text-[20px] md:text-[24px] leading-tight m-0">Every gadget I buy, logged.</h1>
-            </div>
-            <div className="flex items-center gap-4 sm:gap-6 shrink-0">
-              <div className="flex flex-col text-right">
-                <div className="text-[9px] font-mono uppercase tracking-wider" style={{ color: 'color-mix(in srgb, var(--color-text) 55%, transparent)' }}>Items</div>
-                <div className="font-[var(--font-heading)] font-extrabold text-[18px] leading-none mt-0.5">{products.length}</div>
-              </div>
-              <div className="flex flex-col text-right border-l-2 pl-4 sm:pl-6" style={dividerColor}>
-                <div className="text-[9px] font-mono uppercase tracking-wider" style={{ color: 'color-mix(in srgb, var(--color-text) 55%, transparent)' }}>Categories</div>
-                <div className="font-[var(--font-heading)] font-extrabold text-[18px] leading-none mt-0.5">{cats.length}</div>
-              </div>
-              <div className="flex flex-col text-right border-l-2 pl-4 sm:pl-6" style={dividerColor}>
-                <div className="text-[9px] font-mono uppercase tracking-wider" style={{ color: 'color-mix(in srgb, var(--color-text) 55%, transparent)' }}>Spend</div>
-                <div className="flex items-center justify-end gap-1 mt-0.5">
-                  <div className="font-[var(--font-heading)] font-extrabold text-[18px] leading-none">{owner ? money(total) : mask()}</div>
-                  {!owner && <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="var(--color-accent)" strokeWidth="2.5" className="shrink-0"><rect x="3" y="11" width="18" height="11" /><path d="M7 11V7a5 5 0 0 1 10 0v4" /></svg>}
-                </div>
-              </div>
-            </div>
-          </section>
 
           <section className="flex flex-wrap items-center gap-4 px-5 py-2.5 border-b-2 shrink-0 z-10 bg-[var(--color-bg)]" style={dividerColor}>
             <div className="flex items-center gap-2 border px-2.5 min-w-[260px]" style={{ borderColor: 'var(--color-divider)', background: 'var(--color-surface)' }}>
