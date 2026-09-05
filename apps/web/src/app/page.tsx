@@ -389,17 +389,34 @@ export default function GadgetTracker() {
             <section className="flex-1 min-h-0 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 z-10 bg-[var(--color-bg)] overflow-y-auto" style={dividerColor}>
               {catalogItems.map((p, i) => {
                 const specList = Object.entries(p.specs).slice(0, 3).map(([k, v]) => `${k} ${v}`);
-                const lastCol = (i + 1) % 3 === 0;
                 const img = resolveImageUrl(p.referenceImage);
+                
+                const total = catalogItems.length;
+                const isLastRowMob = Math.floor(i / 1) === Math.floor((total - 1) / 1);
+                const isLastRowSm = Math.floor(i / 2) === Math.floor((total - 1) / 2);
+                const isLastRowLg = Math.floor(i / 3) === Math.floor((total - 1) / 3);
+                
+                const hasRightSm = (i + 1) % 2 !== 0 && i + 1 < total;
+                const hasRightLg = (i + 1) % 3 !== 0 && i + 1 < total;
+                
+                const borderClasses = `
+                  ${isLastRowMob ? 'border-b-0' : 'border-b-2'}
+                  ${isLastRowSm ? 'sm:border-b-0' : 'sm:border-b-2'}
+                  ${isLastRowLg ? 'lg:border-b-0' : 'lg:border-b-2'}
+                  border-r-0
+                  ${hasRightSm ? 'sm:border-r-2' : 'sm:border-r-0'}
+                  ${hasRightLg ? 'lg:border-r-2' : 'lg:border-r-0'}
+                `;
+
                 return (
                   <article
                     key={p.id}
                     onClick={() => { setDetailId(p.id); go('detail'); }}
-                    className={`p-3 md:p-4 cursor-pointer border-b-2 flex flex-row items-center gap-3.5 md:gap-4 hover:[background:var(--color-neutral-100)] transition-colors h-full ${lastCol ? '' : 'lg:border-r-2'} ${(i + 1) % 2 !== 0 ? 'sm:border-r-2 lg:border-r-2' : ''}`}
+                    className={`p-3 md:p-4 cursor-pointer flex flex-row items-center gap-3.5 md:gap-4 hover:[background:var(--color-neutral-100)] transition-colors h-full ${borderClasses}`}
                     style={dividerColor}
                   >
                     {img ? (
-                      <div className="relative aspect-square w-[45%] shrink-0 overflow-hidden border border-[var(--color-divider)]">
+                      <div className="relative aspect-square w-[45%] shrink-0 overflow-hidden">
                         <img src={img} alt={p.name} className="absolute inset-0 w-full h-full object-cover grayscale opacity-80 hover:grayscale-0 hover:opacity-100 hover:scale-105 transition-all duration-500" />
                       </div>
                     ) : (
