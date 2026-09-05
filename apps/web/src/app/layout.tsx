@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Archivo, IBM_Plex_Mono } from "next/font/google";
 import StoreProvider from "@/lib/StoreProvider";
+import AuthBootstrap from "@/lib/AuthBootstrap";
 import "./globals.css";
 
 const archivo = Archivo({
@@ -31,7 +32,9 @@ export default function RootLayout({
         className={`${archivo.variable} ${plexMono.variable} min-h-screen antialiased`}
         style={{ background: "var(--color-bg)", color: "var(--color-text)" }}
       >
-        <StoreProvider>{children}</StoreProvider>
+        <StoreProvider>
+          <AuthBootstrap>{children}</AuthBootstrap>
+        </StoreProvider>
       </body>
     </html>
   );
