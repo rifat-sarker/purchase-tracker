@@ -743,7 +743,7 @@ export default function GadgetTracker() {
         </main>
       )}
 
-      <footer className="flex items-center justify-center px-5 py-1 border-t-2 shrink-0 z-10 bg-[var(--color-bg)]" style={dividerColor}>
+      <footer className="flex items-center justify-center px-5 py-1 shrink-0 z-10 bg-[var(--color-bg)]">
         <span className="font-mono text-[9px] tracking-widest uppercase" style={{ color: 'color-mix(in srgb, var(--color-text) 50%, transparent)' }}>
           &copy; {new Date().getFullYear()} Rifat Sarker
         </span>
