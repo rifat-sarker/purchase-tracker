@@ -115,6 +115,15 @@ function StatusNote({ children, tone = 'muted' }: { children: React.ReactNode; t
   );
 }
 
+function LoadingSpinner({ label = 'Loading' }: { label?: string }) {
+  return (
+    <div className="flex flex-col items-center justify-center p-12 w-full h-full gap-5 opacity-80 min-h-[200px]">
+      <div className="w-10 h-10 border-4 border-t-[var(--color-accent)] border-[var(--color-text)] animate-spin shadow-[4px_4px_0_0_var(--color-text)]"></div>
+      <div className="font-mono text-[11px] tracking-widest uppercase font-bold animate-pulse">{label}</div>
+    </div>
+  );
+}
+
 // ─── the app ───
 
 export default function GadgetTracker() {
@@ -357,7 +366,7 @@ export default function GadgetTracker() {
           </section>
 
           {catalogQuery.isLoading ? (
-            <StatusNote>Loading catalog…</StatusNote>
+            <LoadingSpinner label="Loading catalog…" />
           ) : catalogQuery.isError ? (
             <StatusNote tone="accent">Couldn&apos;t reach the API. <button className="underline cursor-pointer" onClick={() => catalogQuery.refetch()}>Retry</button></StatusNote>
           ) : (
@@ -442,7 +451,7 @@ export default function GadgetTracker() {
             <span className="font-mono text-[11px]" style={{ color: 'color-mix(in srgb, var(--color-text) 50%, transparent)' }}>{detailId}</span>
           </div>
           {detailQuery.isLoading ? (
-            <StatusNote>Loading…</StatusNote>
+            <LoadingSpinner label="Loading entry…" />
           ) : detailQuery.isError || !detailP ? (
             <StatusNote tone="accent">Product not found.</StatusNote>
           ) : (
@@ -582,7 +591,7 @@ export default function GadgetTracker() {
           </section>
           {saveError && <div className="px-5 py-2 text-xs font-mono" style={{ color: 'var(--color-accent)' }}>{saveError}</div>}
           {allProductsQuery.isLoading ? (
-            <StatusNote>Loading purchase log…</StatusNote>
+            <LoadingSpinner label="Loading purchase log…" />
           ) : (
             <section>
               <div className="hidden md:block px-5 py-2 border-b-2 font-mono text-[9px] tracking-widest uppercase" style={{ color: 'color-mix(in srgb, var(--color-text) 50%, transparent)', ...dividerColor }}>
@@ -749,7 +758,7 @@ export default function GadgetTracker() {
             <div className="p-5 md:border-r-2" style={dividerColor}>
               <h3 className="mb-1">Spend by category</h3>
               <p className="text-xs" style={{ color: 'color-mix(in srgb, var(--color-text) 55%, transparent)' }}>groupBy category · sum price · cached 5 min</p>
-              {byCategoryQuery.isLoading ? <StatusNote>Loading…</StatusNote> : (
+              {byCategoryQuery.isLoading ? <LoadingSpinner label="Analyzing categories…" /> : (
                 <div className="grid gap-3.5 mt-5">
                   {(() => {
                     const rows = byCategoryQuery.data ?? [];
@@ -772,7 +781,7 @@ export default function GadgetTracker() {
             <div className="p-5">
               <h3 className="mb-1">Spend over time</h3>
               <p className="text-xs" style={{ color: 'color-mix(in srgb, var(--color-text) 55%, transparent)' }}>DATE_TRUNC(&apos;month&apos;, &quot;purchaseDate&quot;) · raw query</p>
-              {byMonthQuery.isLoading ? <StatusNote>Loading…</StatusNote> : (() => {
+              {byMonthQuery.isLoading ? <LoadingSpinner label="Analyzing trends…" /> : (() => {
                 const rows = byMonthQuery.data ?? [];
                 const maxMonth = Math.max(...rows.map((r) => r.totalSpend), 1);
                 return (
@@ -829,7 +838,7 @@ export default function GadgetTracker() {
               <div className="font-[var(--font-heading)] font-extrabold text-[32px]">{(upcomingWarrantyQuery.data ?? []).filter((w) => w.warrantyNotified).length}</div>
             </div>
           </section>
-          {upcomingWarrantyQuery.isLoading ? <StatusNote>Loading…</StatusNote> : (
+          {upcomingWarrantyQuery.isLoading ? <LoadingSpinner label="Scanning warranties…" /> : (
             <section>
               <div className="hidden md:block px-5 py-2 border-b-2 font-mono text-[9px] tracking-widest uppercase" style={{ color: 'color-mix(in srgb, var(--color-text) 50%, transparent)', ...dividerColor }}>
                 <div className="grid grid-cols-[120px_2fr_1fr_1fr_auto] gap-5">
