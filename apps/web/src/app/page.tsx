@@ -487,7 +487,7 @@ export default function GadgetTracker() {
       {/* ── DASHBOARD ── */}
       {screen === 'dashboard' && (
         <main className="flex-1 overflow-y-auto">
-          <section className="grid grid-cols-2 md:grid-cols-4 border-b-2" style={dividerColor}>
+          <section className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 border-b-2" style={dividerColor}>
             <StatCell label="Total spend" value={money(total)} sub="BDT · all statuses" borderRight />
             <StatCell label="Items" value={products.length} sub={`${cats.length} categories`} borderRight />
             <StatCell label="Average price" value={money(Math.round(total / (products.length || 1)))} sub="per item" borderRight />
@@ -505,33 +505,43 @@ export default function GadgetTracker() {
             </div>
           </section>
           <section>
+            <div className="hidden md:block px-5 py-2 border-b-2 font-mono text-[9px] tracking-widest uppercase" style={{ color: 'color-mix(in srgb, var(--color-text) 50%, transparent)', ...dividerColor }}>
+              <div className="grid grid-cols-[88px_2.2fr_1fr_1fr_1fr_auto] gap-5">
+                <div></div>
+                <div>Product</div>
+                <div>Price</div>
+                <div>Purchased</div>
+                <div>Warranty</div>
+                <div className="text-right">Action</div>
+              </div>
+            </div>
             {products.slice().sort((a, b) => b.purchaseDate.localeCompare(a.purchaseDate)).map((p) => {
               const d = daysUntil(p.warrantyExpiry);
               return (
-                <div key={p.id} className="grid grid-cols-2 md:grid-cols-[88px_2.2fr_1fr_1fr_1fr_auto] items-center gap-5 px-5 py-3.5 border-b hover:[background:color-mix(in_srgb,var(--color-text)_4%,transparent)]" style={dividerColor}>
+                <div key={p.id} className="grid grid-cols-2 md:grid-cols-[88px_2.2fr_1fr_1fr_1fr_auto] items-center gap-y-4 gap-x-3 sm:gap-5 px-5 py-4 sm:py-3.5 border-b hover:[background:color-mix(in_srgb,var(--color-text)_4%,transparent)]" style={dividerColor}>
                   {p.referenceImage ? (
                     <img src={p.referenceImage} alt={p.name} className="h-[60px] w-[88px] object-cover grayscale hidden md:block rounded border" style={{ borderColor: 'var(--color-divider)' }} />
                   ) : (
                     <PlaceholderBox label="photo" className="h-[60px] hidden md:flex" />
                   )}
-                  <div>
+                  <div className="col-span-2 md:col-span-1">
                     <div className="font-[var(--font-heading)] font-extrabold text-[16px]">{p.name}</div>
                     <div className="font-mono text-[11px]" style={{ color: 'color-mix(in srgb, var(--color-text) 55%, transparent)' }}>{p.category} · {[p.brand, p.model].filter(Boolean).join(' ')}</div>
                   </div>
                   <div>
-                    <div className="text-[10px] font-mono uppercase tracking-wider" style={{ color: 'color-mix(in srgb, var(--color-text) 50%, transparent)' }}>Price</div>
+                    <div className="text-[10px] font-mono uppercase tracking-wider md:hidden" style={{ color: 'color-mix(in srgb, var(--color-text) 50%, transparent)' }}>Price</div>
                     <div className="font-[var(--font-heading)] font-extrabold text-[15px]">{money(p.price, p.currency)}</div>
                   </div>
                   <div>
-                    <div className="text-[10px] font-mono uppercase tracking-wider" style={{ color: 'color-mix(in srgb, var(--color-text) 50%, transparent)' }}>Purchased</div>
+                    <div className="text-[10px] font-mono uppercase tracking-wider md:hidden" style={{ color: 'color-mix(in srgb, var(--color-text) 50%, transparent)' }}>Purchased</div>
                     <div className="font-mono text-[13px]">{p.purchaseDate}</div>
                   </div>
                   <div>
-                    <div className="text-[10px] font-mono uppercase tracking-wider" style={{ color: 'color-mix(in srgb, var(--color-text) 50%, transparent)' }}>Warranty</div>
+                    <div className="text-[10px] font-mono uppercase tracking-wider md:hidden" style={{ color: 'color-mix(in srgb, var(--color-text) 50%, transparent)' }}>Warranty</div>
                     <div className="font-mono text-[13px]" style={{ color: d !== null && d >= 0 && d <= 30 ? 'var(--color-accent)' : 'inherit' }}>{d === null ? 'none' : d < 0 ? 'expired' : d + ' days left'}</div>
                   </div>
-                  <div className="flex items-center gap-2">
-                    <span className="tag tag-neutral">{p.status}</span>
+                  <div className="flex items-center justify-end gap-2 col-span-2 md:col-span-1">
+                    <span className="tag tag-neutral hidden md:inline-flex">{p.status}</span>
                     <button className="btn btn-ghost" onClick={() => openForm(p.id)}>Edit</button>
                     <button className="btn btn-ghost" onClick={() => { setDetailId(p.id); go('detail'); }}>View</button>
                   </div>
@@ -558,7 +568,7 @@ export default function GadgetTracker() {
           <section className="grid grid-cols-1 md:grid-cols-[1.2fr_1fr] border-b-2" style={dividerColor}>
             <div className="p-5 md:border-r-2" style={dividerColor}>
               <h6 className="mb-4">Identity</h6>
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="field col-span-2"><label>Name *</label><input className="input" value={form.name} onChange={setF('name')} /></div>
                 <div className="field"><label>Category *</label>
                   <select className="input" value={form.category} onChange={setF('category')}>
@@ -578,7 +588,7 @@ export default function GadgetTracker() {
               <h6 className="mb-4">Specs — free-form JSON keys</h6>
               <div className="grid gap-2.5">
                 {specRows.map((row, i) => (
-                  <div key={i} className="grid grid-cols-[1fr_1.4fr_auto] gap-2.5 items-center">
+                  <div key={i} className="grid grid-cols-[1fr_1fr_auto] sm:grid-cols-[1fr_1.4fr_auto] gap-2.5 items-center">
                     <input className="input" value={row.key} onChange={(e) => setSpecRows((r) => r.map((x, j) => j === i ? { ...x, key: e.target.value } : x))} />
                     <input className="input" value={row.value} onChange={(e) => setSpecRows((r) => r.map((x, j) => j === i ? { ...x, value: e.target.value } : x))} />
                     <button className="btn btn-ghost" onClick={() => setSpecRows((r) => r.filter((_, j) => j !== i))}>Remove</button>
@@ -589,7 +599,7 @@ export default function GadgetTracker() {
             </div>
             <div className="p-5">
               <h6 className="mb-4">Owner-only fields</h6>
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="field"><label>Price *</label><input className="input" type="number" value={form.price} onChange={setF('price')} /></div>
                 <div className="field"><label>Currency</label><input className="input" value={form.currency} onChange={setF('currency')} /></div>
                 <div className="field"><label>Purchase date *</label><input className="input" type="date" value={form.purchaseDate} onChange={setF('purchaseDate')} /></div>
@@ -648,7 +658,7 @@ export default function GadgetTracker() {
       {/* ── ANALYTICS ── */}
       {screen === 'analytics' && (
         <main className="flex-1 overflow-y-auto">
-          <section className="grid grid-cols-2 md:grid-cols-4 border-b-2" style={dividerColor}>
+          <section className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 border-b-2" style={dividerColor}>
             <StatCell label="Total spend" value={money(total)} sub="_sum price" borderRight />
             <StatCell label="Items" value={products.length} sub="_count" borderRight />
             <StatCell label="Average" value={money(Math.round(total / (products.length || 1)))} sub="_avg price" borderRight />
@@ -745,13 +755,22 @@ export default function GadgetTracker() {
             </div>
           </section>
           <section>
+            <div className="hidden md:block px-5 py-2 border-b-2 font-mono text-[9px] tracking-widest uppercase" style={{ color: 'color-mix(in srgb, var(--color-text) 50%, transparent)', ...dividerColor }}>
+              <div className="grid grid-cols-[120px_2fr_1fr_1fr_auto] gap-5">
+                <div>Countdown</div>
+                <div>Product</div>
+                <div>Expires</div>
+                <div>Status</div>
+                <div className="text-right">Action</div>
+              </div>
+            </div>
             {products
               .filter((p) => { const d = daysUntil(p.warrantyExpiry); return d !== null && d >= 0 && d <= 30; })
               .sort((a, b) => (a.warrantyExpiry || '').localeCompare(b.warrantyExpiry || ''))
               .map((p) => {
                 const d = daysUntil(p.warrantyExpiry)!;
                 return (
-                  <div key={p.id} className="grid grid-cols-2 md:grid-cols-[120px_2fr_1fr_1fr_auto] gap-5 items-center px-5 py-4.5 border-b" style={dividerColor}>
+                  <div key={p.id} className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-[120px_2fr_1fr_1fr_auto] gap-y-4 gap-x-3 sm:gap-5 items-center px-5 py-4 sm:py-4.5 border-b" style={dividerColor}>
                     <div className="font-[var(--font-heading)] font-extrabold text-[22px] px-3 py-2 inline-block w-fit" style={{ color: d <= 14 ? 'var(--color-bg)' : 'var(--color-text)', background: d <= 14 ? 'var(--color-accent)' : 'var(--color-neutral-200)' }}>
                       {d}{d === 1 ? ' day' : ' days'}
                     </div>
