@@ -130,6 +130,7 @@ export default function GadgetTracker() {
   const [category, setCategory] = useState('ALL');
   const [sort, setSort] = useState<'purchaseDate' | 'price' | 'name'>('purchaseDate');
   const [editingId, setEditingId] = useState<string | null>(null);
+  const [confirmDelete, setConfirmDelete] = useState(false);
   const [form, setForm] = useState<FormState>(blankForm());
   const [specRows, setSpecRows] = useState<{ key: string; value: string }[]>([{ key: '', value: '' }]);
   const [uploadFiles, setUploadFiles] = useState<File[]>([]);
@@ -208,13 +209,15 @@ export default function GadgetTracker() {
     }
   };
 
-  const deleteEntry = async () => {
-    if (!editingId || !window.confirm('Are you sure you want to completely delete this entry?')) return;
+  const executeDelete = async () => {
+    if (!editingId) return;
     try {
       await deleteProduct({ id: editingId, hard: true }).unwrap();
+      setConfirmDelete(false);
       go('dashboard');
     } catch (err) {
       setSaveError(apiErrorMessage(err, 'Could not delete this entry.'));
+      setConfirmDelete(false);
     }
   };
 
@@ -636,7 +639,7 @@ export default function GadgetTracker() {
             </div>
             <div className="flex gap-2">
               {editingId && (
-                <button className="btn btn-ghost" style={{ color: 'var(--color-accent)' }} onClick={deleteEntry} disabled={saving}>Delete</button>
+                <button className="btn btn-ghost" style={{ color: 'var(--color-accent)' }} onClick={(e) => { e.preventDefault(); setConfirmDelete(true); }} disabled={saving}>Delete</button>
               )}
               <button className="btn btn-secondary" onClick={() => go(editingId ? 'detail' : 'dashboard')} disabled={saving}>Cancel</button>
               <button className="btn btn-primary" onClick={saveEntry} disabled={saving}>{saving ? 'Saving…' : 'Save entry'}</button>
@@ -874,6 +877,24 @@ export default function GadgetTracker() {
             &copy; {new Date().getFullYear()} Rifat Sarker
           </span>
         </footer>
+      )}
+
+      {/* ── CUSTOM DELETE MODAL ── */}
+      {confirmDelete && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-5 bg-[rgba(0,0,0,0.6)] backdrop-blur-sm">
+          <div className="bg-[var(--color-bg)] border-[3px] p-7 md:p-10 max-w-md w-full shadow-[8px_8px_0_0_rgba(0,0,0,1)]" style={{ borderColor: 'var(--color-text)' }}>
+            <h2 className="text-[28px] md:text-[34px] leading-[1.1] font-[var(--font-heading)] font-extrabold mb-4">Delete this entry?</h2>
+            <p className="text-[15px] mb-8" style={{ color: 'color-mix(in srgb, var(--color-text) 70%, transparent)' }}>
+              This action cannot be undone. The product will be completely permanently removed from the database.
+            </p>
+            <div className="flex flex-col sm:flex-row gap-3 justify-end">
+              <button className="btn btn-secondary" onClick={() => setConfirmDelete(false)} disabled={deleting}>Cancel</button>
+              <button className="btn btn-primary" style={{ background: 'var(--color-accent)', color: 'var(--color-bg)', borderColor: 'var(--color-accent)' }} onClick={executeDelete} disabled={deleting}>
+                {deleting ? 'Deleting…' : 'Yes, delete'}
+              </button>
+            </div>
+          </div>
+        </div>
       )}
     </div>
   );
