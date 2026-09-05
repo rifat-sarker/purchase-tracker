@@ -263,9 +263,9 @@ export default function GadgetTracker() {
 
 
           <section className="flex flex-wrap items-center gap-4 px-5 py-2.5 border-b-2 shrink-0 z-10 bg-[var(--color-bg)]" style={dividerColor}>
-            <div className="flex items-center gap-2 border px-2.5 min-w-[260px] focus-within:border-[var(--color-text)] transition-colors" style={{ borderColor: 'var(--color-divider)', background: 'var(--color-surface)' }}>
+            <div className="flex items-center gap-2 border border-[color:var(--color-divider)] focus-within:border-[color:var(--color-text)] px-2.5 min-w-[260px] transition-colors" style={{ background: 'var(--color-surface)' }}>
               <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" style={{ opacity: 0.5 }}><circle cx="11" cy="11" r="8" /><path d="m21 21-4.3-4.3" /></svg>
-              <input className="bg-transparent border-0 outline-none w-full text-[var(--color-text)] py-1.5 text-sm" placeholder="Search name, brand, model" value={search} onChange={(e) => setSearch(e.target.value)} />
+              <input className="bg-transparent !border-0 !outline-none focus:!outline-none focus:!ring-0 focus:!border-0 !shadow-none w-full text-[var(--color-text)] py-1.5 text-sm" placeholder="Search name, brand, model" value={search} onChange={(e) => setSearch(e.target.value)} />
             </div>
             <div className="flex flex-wrap gap-1.5 flex-1">
               {['ALL', ...cats].map((c) => (
@@ -364,7 +364,7 @@ export default function GadgetTracker() {
 
       {/* ── DETAIL ── */}
       {screen === 'detail' && detailP && (
-        <main>
+        <main className="flex-1 overflow-y-auto">
           <div className="flex items-center gap-3 px-5 py-3 border-b-2" style={dividerColor}>
             <button className="btn btn-ghost" onClick={() => go('catalog')}>
               <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="m15 18-6-6 6-6" /></svg>Catalog
