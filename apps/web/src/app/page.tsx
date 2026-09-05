@@ -114,7 +114,7 @@ export default function GadgetTracker() {
   const [loginPassword, setLoginPassword] = useState('');
   const [loginError, setLoginError] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 3;
+  const itemsPerPage = 6;
 
   const go = (s: Screen) => { setScreen(s); setCurrentPage(1); };
 
@@ -299,7 +299,7 @@ export default function GadgetTracker() {
             </div>
           </section>
 
-          <section className="flex-1 min-h-0 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 z-10 bg-[var(--color-bg)] overflow-hidden" style={dividerColor}>
+          <section className="flex-1 min-h-0 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 z-10 bg-[var(--color-bg)] overflow-y-auto" style={dividerColor}>
             {paginatedCatalog.map((p, i) => {
               const specList = Object.entries(p.specs).slice(0, 3).map(([k, v]) => `${k} ${v}`);
               const lastCol = (i + 1) % 3 === 0;
@@ -311,11 +311,11 @@ export default function GadgetTracker() {
                   style={dividerColor}
                 >
                   {p.referenceImage ? (
-                    <div className="relative h-[120px] md:h-[160px] w-full shrink-0 overflow-hidden rounded border border-[var(--color-divider)]">
+                    <div className="relative h-[100px] md:h-[130px] w-full shrink-0 overflow-hidden rounded border border-[var(--color-divider)]">
                       <img src={p.referenceImage} alt={p.name} className="absolute inset-0 w-full h-full object-cover grayscale opacity-80 hover:grayscale-0 hover:opacity-100 hover:scale-105 transition-all duration-500" />
                     </div>
                   ) : (
-                    <PlaceholderBox label="Product photo" className="h-[120px] md:h-[160px] shrink-0" />
+                    <PlaceholderBox label="Product photo" className="h-[100px] md:h-[130px] shrink-0" />
                   )}
                   <div className="flex items-baseline justify-between gap-2.5 mt-4">
                     <span className="font-mono text-[10px] tracking-wider" style={{ color: 'var(--color-accent)' }}>{p.category}</span>
