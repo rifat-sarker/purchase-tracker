@@ -484,7 +484,7 @@ export default function GadgetTracker() {
 
       {/* ── DASHBOARD ── */}
       {screen === 'dashboard' && (
-        <main>
+        <main className="flex-1 overflow-y-auto">
           <section className="grid grid-cols-2 md:grid-cols-4 border-b-2" style={dividerColor}>
             <StatCell label="Total spend" value={money(total)} sub="BDT · all statuses" borderRight />
             <StatCell label="Items" value={products.length} sub={`${cats.length} categories`} borderRight />
@@ -542,7 +542,7 @@ export default function GadgetTracker() {
 
       {/* ── FORM (create / edit) ── */}
       {screen === 'form' && (
-        <main>
+        <main className="flex-1 overflow-y-auto">
           <section className="flex items-baseline justify-between gap-5 px-5 py-7 border-b-2" style={dividerColor}>
             <div>
               <div className="font-mono text-[11px] tracking-wider uppercase mb-2" style={{ color: 'var(--color-accent)' }}>{editingId ? `PATCH /products/${editingId}` : 'POST /products'}</div>
@@ -618,7 +618,7 @@ export default function GadgetTracker() {
 
       {/* ── ANALYTICS ── */}
       {screen === 'analytics' && (
-        <main>
+        <main className="flex-1 overflow-y-auto">
           <section className="grid grid-cols-2 md:grid-cols-4 border-b-2" style={dividerColor}>
             <StatCell label="Total spend" value={money(total)} sub="_sum price" borderRight />
             <StatCell label="Items" value={products.length} sub="_count" borderRight />
@@ -701,7 +701,7 @@ export default function GadgetTracker() {
 
       {/* ── WARRANTY ── */}
       {screen === 'warranty' && (
-        <main>
+        <main className="flex-1 overflow-y-auto">
           <section className="grid grid-cols-1 md:grid-cols-[1.5fr_1fr] border-b-2" style={dividerColor}>
             <div className="p-8 px-5 md:border-r-2" style={dividerColor}>
               <div className="font-mono text-[11px] tracking-wider uppercase mb-3" style={{ color: 'var(--color-accent)' }}>Cron · daily 08:00</div>
