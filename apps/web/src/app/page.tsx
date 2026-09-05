@@ -319,12 +319,21 @@ export default function GadgetTracker() {
                   </div>
                   <h3 className="text-xl mt-2 mb-1">{p.name}</h3>
                   <div className="text-[13px]" style={{ color: 'color-mix(in srgb, var(--color-text) 60%, transparent)' }}>{[p.brand, p.model].filter(Boolean).join(' · ') || '—'}</div>
+                  <div className="font-mono text-[10px] mt-1" style={{ color: 'color-mix(in srgb, var(--color-text) 45%, transparent)' }}>
+                    {owner ? `Purchased: ${fdate(p.purchaseDate)}` : `Owned since ${p.purchaseDate.slice(0, 4)}`}
+                  </div>
                   <div className="flex flex-wrap gap-1.5 mt-3.5">
                     {specList.map((s) => <span key={s} className="tag tag-outline">{s}</span>)}
                   </div>
-                  <div className="mt-auto flex items-center justify-between gap-2.5 pt-3">
+                  <div className="mt-auto flex items-center justify-between gap-2.5 pt-4">
                     <span className="font-[var(--font-heading)] font-extrabold text-[17px]">{owner ? money(p.price, p.currency) : mask()}</span>
-                    <span className="font-mono text-[11px]" style={{ color: 'color-mix(in srgb, var(--color-text) 55%, transparent)' }}>{owner ? fdate(p.purchaseDate) : 'owned since ' + p.purchaseDate.slice(0, 4)}</span>
+                    <button 
+                      onClick={() => { setDetailId(p.id); go('detail'); }}
+                      className="font-mono text-[9px] uppercase tracking-wider px-3 py-1.5 border hover:bg-[var(--color-accent)] hover:text-white hover:border-[var(--color-accent)] transition-colors cursor-pointer"
+                      style={{ borderColor: 'var(--color-divider)', color: 'var(--color-text)' }}
+                    >
+                      Details &rarr;
+                    </button>
                   </div>
                 </article>
               );
