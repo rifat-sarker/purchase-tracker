@@ -12,6 +12,7 @@ import {
   useGetProductQuery,
   useCreateProductMutation,
   useUpdateProductMutation,
+  useDeleteProductMutation,
   useGetAnalyticsSummaryQuery,
   useGetAnalyticsByCategoryQuery,
   useGetAnalyticsByMonthQuery,
@@ -176,7 +177,8 @@ export default function GadgetTracker() {
   const [logoutMutation] = useLogoutMutation();
   const [createProduct, { isLoading: creating }] = useCreateProductMutation();
   const [updateProduct, { isLoading: updating }] = useUpdateProductMutation();
-  const saving = creating || updating;
+  const [deleteProduct, { isLoading: deleting }] = useDeleteProductMutation();
+  const saving = creating || updating || deleting;
 
   const openForm = (id: string | null) => {
     const p = id ? allProducts.find((x) => x.id === id) : null;
@@ -203,6 +205,16 @@ export default function GadgetTracker() {
       go('dashboard');
     } catch (err) {
       setSaveError(apiErrorMessage(err, 'Could not save this entry — is the API running?'));
+    }
+  };
+
+  const deleteEntry = async () => {
+    if (!editingId || !window.confirm('Are you sure you want to completely delete this entry?')) return;
+    try {
+      await deleteProduct({ id: editingId, hard: true }).unwrap();
+      go('dashboard');
+    } catch (err) {
+      setSaveError(apiErrorMessage(err, 'Could not delete this entry.'));
     }
   };
 
@@ -623,7 +635,10 @@ export default function GadgetTracker() {
               <h1 className="text-[38px] m-0">{editingId ? 'Edit entry' : 'Log a purchase'}</h1>
             </div>
             <div className="flex gap-2">
-              <button className="btn btn-secondary" onClick={() => go(editingId ? 'detail' : 'dashboard')}>Cancel</button>
+              {editingId && (
+                <button className="btn btn-ghost" style={{ color: 'var(--color-accent)' }} onClick={deleteEntry} disabled={saving}>Delete</button>
+              )}
+              <button className="btn btn-secondary" onClick={() => go(editingId ? 'detail' : 'dashboard')} disabled={saving}>Cancel</button>
               <button className="btn btn-primary" onClick={saveEntry} disabled={saving}>{saving ? 'Saving…' : 'Save entry'}</button>
             </div>
           </section>
