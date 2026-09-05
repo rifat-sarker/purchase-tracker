@@ -338,8 +338,11 @@ export default function GadgetTracker() {
           </section>
 
           <section className="flex items-center justify-between gap-5 px-5 py-1.5 border-t-2 shrink-0 z-10 bg-[var(--color-bg)]" style={dividerColor}>
-            <span className="font-mono text-[11px]" style={{ color: 'color-mix(in srgb, var(--color-text) 60%, transparent)' }}>
+            <span className="font-mono text-[10px]" style={{ color: 'color-mix(in srgb, var(--color-text) 60%, transparent)' }}>
               Showing {paginatedCatalog.length} of {filteredCatalog.length} items · page {currentPage} of {totalPages || 1}
+            </span>
+            <span className="font-mono text-[9px] tracking-widest uppercase hidden sm:block" style={{ color: 'color-mix(in srgb, var(--color-text) 30%, transparent)' }}>
+              &copy; {new Date().getFullYear()} Rifat Sarker
             </span>
             <div className="flex gap-2">
               <button 
@@ -743,11 +746,13 @@ export default function GadgetTracker() {
         </main>
       )}
 
-      <footer className="flex items-center justify-center px-5 py-1 shrink-0 z-10 bg-[var(--color-bg)]">
-        <span className="font-mono text-[9px] tracking-widest uppercase" style={{ color: 'color-mix(in srgb, var(--color-text) 50%, transparent)' }}>
-          &copy; {new Date().getFullYear()} Rifat Sarker
-        </span>
-      </footer>
+      {screen !== 'catalog' && (
+        <footer className="flex items-center justify-center px-5 py-1 shrink-0 z-10 bg-[var(--color-bg)]">
+          <span className="font-mono text-[9px] tracking-widest uppercase" style={{ color: 'color-mix(in srgb, var(--color-text) 50%, transparent)' }}>
+            &copy; {new Date().getFullYear()} Rifat Sarker
+          </span>
+        </footer>
+      )}
     </div>
   );
 }
