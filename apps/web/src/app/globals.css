@@ -48,26 +48,26 @@
    zero border radius, 2px dividers. Archivo for display type,
    IBM Plex Mono for meta/numeric labels. */
 :root {
-  --color-bg: #f3f2f2;
-  --color-surface: #eae9e9;
-  --color-text: #201e1d;
-  --color-accent: #ec3013;
-  --color-accent-2: #e15b47;
-  --color-divider: color-mix(in srgb, #201e1d 40%, transparent);
+  --color-bg: #fdfdfd;
+  --color-surface: #f1f1f1;
+  --color-text: #1a1a1a;
+  --color-accent: #64818F; /* Soft Slate / Muted Blue */
+  --color-accent-2: #7A9CA9;
+  --color-divider: color-mix(in srgb, #1a1a1a 25%, transparent);
 
-  --color-neutral-100: #f8f4f4;
-  --color-neutral-200: #eae7e7;
-  --color-neutral-300: #d7d3d3;
-  --color-neutral-400: #bab6b6;
-  --color-neutral-500: #9b9797;
-  --color-neutral-600: #7d7979;
-  --color-neutral-700: #605d5d;
-  --color-neutral-800: #444141;
-  --color-neutral-900: #2d2b2b;
+  --color-neutral-100: #f5f5f5;
+  --color-neutral-200: #e5e5e5;
+  --color-neutral-300: #d4d4d4;
+  --color-neutral-400: #a3a3a3;
+  --color-neutral-500: #737373;
+  --color-neutral-600: #525252;
+  --color-neutral-700: #404040;
+  --color-neutral-800: #262626;
+  --color-neutral-900: #171717;
 
-  --color-accent-100: #fff2ef;
-  --color-accent-200: #ffe0d9;
-  --color-accent-800: #7c1405;
+  --color-accent-100: #e2e8ea;
+  --color-accent-200: #c5d1d6;
+  --color-accent-800: #2c3a40;
 
   --background: var(--color-bg);
   --foreground: var(--color-text);

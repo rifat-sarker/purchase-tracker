@@ -497,24 +497,24 @@ export default function GadgetTracker() {
                       ...Object.entries(detailP.specs).map(([k, v]) => ({ label: 'Spec · ' + k, value: v })),
                       ...(owner
                         ? [
-                            { label: 'Price', value: money(detailP.price ?? 0, detailP.currency) },
-                            { label: 'Purchase date', value: fdate(detailP.purchaseDate) || '—' },
-                            { label: 'Purchased from', value: detailP.purchasedFrom || '—' },
-                            { label: 'Warranty expiry', value: fdate(detailP.warrantyExpiry) || 'none' },
-                            { label: 'Serial / IMEI', value: detailP.serialNumber || '—' },
-                            { label: 'Receipt images', value: (detailP.receiptImages?.length ?? 0) + ' file(s)' },
-                            { label: 'Notes', value: detailP.notes || '—' },
-                          ]
+                          { label: 'Price', value: money(detailP.price ?? 0, detailP.currency) },
+                          { label: 'Purchase date', value: fdate(detailP.purchaseDate) || '—' },
+                          { label: 'Purchased from', value: detailP.purchasedFrom || '—' },
+                          { label: 'Warranty expiry', value: fdate(detailP.warrantyExpiry) || 'none' },
+                          { label: 'Serial / IMEI', value: detailP.serialNumber || '—' },
+                          { label: 'Receipt images', value: (detailP.receiptImages?.length ?? 0) + ' file(s)' },
+                          { label: 'Notes', value: detailP.notes || '—' },
+                        ]
                         : [
-                            { label: 'Owned since', value: String(detailP.ownedSinceYear) },
-                            { label: 'Price', value: mask(), locked: true },
-                            { label: 'Purchase date', value: mask(), locked: true },
-                            { label: 'Purchased from', value: mask(), locked: true },
-                            { label: 'Warranty expiry', value: mask(), locked: true },
-                            { label: 'Serial / IMEI', value: mask(), locked: true },
-                            { label: 'Receipt images', value: mask(), locked: true },
-                            { label: 'Notes', value: mask(), locked: true },
-                          ]),
+                          { label: 'Owned since', value: String(detailP.ownedSinceYear) },
+                          { label: 'Price', value: mask(), locked: true },
+                          { label: 'Purchase date', value: mask(), locked: true },
+                          { label: 'Purchased from', value: mask(), locked: true },
+                          { label: 'Warranty expiry', value: mask(), locked: true },
+                          { label: 'Serial / IMEI', value: mask(), locked: true },
+                          { label: 'Receipt images', value: mask(), locked: true },
+                          { label: 'Notes', value: mask(), locked: true },
+                        ]),
                     ].map((row, i) => (
                       <tr key={i}>
                         <th className="w-2/5 align-top">{row.label}</th>
