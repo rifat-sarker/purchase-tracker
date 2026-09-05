@@ -319,7 +319,11 @@ export default function GadgetTracker() {
                   </div>
                   <div className="flex items-start justify-between gap-2 mt-2 mb-1">
                     <h3 className="text-xl leading-none">{p.name}</h3>
-                    <span className="font-[var(--font-heading)] font-extrabold text-[15px] shrink-0 leading-none">{owner ? money(p.price, p.currency) : mask()}</span>
+                    {owner && (
+                      <span className="font-[var(--font-heading)] font-extrabold text-[15px] shrink-0 leading-none">
+                        {money(p.price, p.currency)}
+                      </span>
+                    )}
                   </div>
                   <div className="text-[13px]" style={{ color: 'color-mix(in srgb, var(--color-text) 60%, transparent)' }}>{[p.brand, p.model].filter(Boolean).join(' · ') || '—'}</div>
                   <div className="font-mono text-[10px] mt-1" style={{ color: 'color-mix(in srgb, var(--color-text) 45%, transparent)' }}>
