@@ -322,7 +322,7 @@ export default function GadgetTracker() {
                   <div className="flex flex-wrap gap-1.5 mt-3.5">
                     {specList.map((s) => <span key={s} className="tag tag-outline">{s}</span>)}
                   </div>
-                  <div className="mt-auto flex items-center justify-between gap-2.5 pt-3 border-t" style={dividerColor}>
+                  <div className="mt-auto flex items-center justify-between gap-2.5 pt-3">
                     <span className="font-[var(--font-heading)] font-extrabold text-[17px]">{owner ? money(p.price, p.currency) : mask()}</span>
                     <span className="font-mono text-[11px]" style={{ color: 'color-mix(in srgb, var(--color-text) 55%, transparent)' }}>{owner ? fdate(p.purchaseDate) : 'owned since ' + p.purchaseDate.slice(0, 4)}</span>
                   </div>
