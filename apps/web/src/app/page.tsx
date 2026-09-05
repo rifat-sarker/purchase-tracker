@@ -427,17 +427,18 @@ export default function GadgetTracker() {
                         <span className="font-mono text-[9px] tracking-wider" style={{ color: 'var(--color-accent)' }}>{p.category}</span>
                         <span className="tag tag-neutral text-[9px] py-0.5 px-2">{p.status}</span>
                       </div>
-                      <div className="flex items-start justify-between gap-2 mb-0.5">
+                      <div className="mb-0.5">
                         <h3 className="text-base md:text-lg leading-tight m-0">{p.name}</h3>
-                        {owner && p.price !== undefined && (
-                          <span className="font-[var(--font-heading)] font-extrabold text-[14px] shrink-0 leading-tight">
-                            {money(p.price, p.currency)}
-                          </span>
-                        )}
                       </div>
                       <div className="text-[12px] mb-1 truncate" style={{ color: 'color-mix(in srgb, var(--color-text) 60%, transparent)' }}>{[p.brand, p.model].filter(Boolean).join(' · ') || '—'}</div>
-                      <div className="font-mono text-[9px]" style={{ color: 'color-mix(in srgb, var(--color-text) 45%, transparent)' }}>
-                        {owner && p.purchaseDate ? `Purchased: ${fdate(p.purchaseDate)}` : `Owned since ${p.ownedSinceYear}`}
+                      <div className="font-mono text-[9px] flex items-center gap-1.5" style={{ color: 'color-mix(in srgb, var(--color-text) 45%, transparent)' }}>
+                        <span>{owner && p.purchaseDate ? `Purchased: ${fdate(p.purchaseDate)}` : `Owned since ${p.ownedSinceYear}`}</span>
+                        {owner && p.price !== undefined && (
+                          <>
+                            <span>·</span>
+                            <span className="font-[var(--font-heading)] font-bold text-[11px]" style={{ color: 'var(--color-text)' }}>{money(p.price, p.currency)}</span>
+                          </>
+                        )}
                       </div>
                       <div className="flex flex-wrap gap-1 mt-2">
                         {specList.slice(0,2).map((s) => <span key={s} className="tag tag-outline text-[8px] py-0.5 px-1.5">{s}</span>)}
