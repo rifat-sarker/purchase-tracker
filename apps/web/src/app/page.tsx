@@ -299,7 +299,7 @@ export default function GadgetTracker() {
     <div className="h-screen w-screen overflow-hidden flex flex-col" style={{ background: 'var(--color-bg)', color: 'var(--color-text)' }}>
       <header className="flex flex-col lg:flex-row lg:items-stretch border-b-2 sticky top-0 z-20 bg-[var(--color-bg)]" style={dividerColor}>
         <div className="flex items-baseline gap-2.5 px-5 py-3 lg:border-r-2 shrink-0" style={dividerColor}>
-          <span className="font-[var(--font-heading)] font-extrabold text-lg tracking-tight">GADGET&nbsp;TRACKER</span>
+          <span className="font-[var(--font-heading)] font-extrabold text-lg tracking-tight">RIFAT'S&nbsp;TRACKER</span>
           <span className="font-mono text-[10px]" style={{ color: 'var(--color-accent)' }}>v1.1</span>
         </div>
         <nav className="flex items-center gap-1 px-3 flex-1 overflow-x-auto">
@@ -560,14 +560,14 @@ export default function GadgetTracker() {
       {/* ── LOGIN ── */}
       {screen === 'login' && (
         <main className="grid grid-cols-1 md:grid-cols-2 flex-1 overflow-y-auto" style={{ minHeight: 'calc(100vh - 57px)' }}>
-          <div className="px-5 py-16 md:border-r-2" style={dividerColor}>
+          <div className="px-5 pt-12 pb-5 md:py-16 md:border-r-2" style={dividerColor}>
             <div className="font-mono text-[11px] tracking-widest uppercase mb-5" style={{ color: 'var(--color-accent)' }}>Owner access</div>
             <h1 className="text-[32px] md:text-[46px] leading-[1.04] mb-4 max-w-[16ch]">Single account. No registration.</h1>
             <p className="max-w-[44ch] text-[15px]" style={{ color: 'color-mix(in srgb, var(--color-text) 70%, transparent)' }}>
               Credentials are seeded from environment variables. A short-lived access token is held in memory; the refresh token lives in an httpOnly cookie. Five attempts per fifteen minutes.
             </p>
           </div>
-          <div className="px-5 py-16 max-w-[460px]">
+          <div className="px-5 pt-5 pb-16 md:py-16 max-w-[460px]">
             <h2 className="text-2xl mb-6">Sign in</h2>
             <div className="field mb-4">
               <label>Email</label>

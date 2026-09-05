@@ -17,7 +17,7 @@ const plexMono = IBM_Plex_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Gadget Tracker",
+  title: "Rifat's Tracker",
   description: "A single-owner log of every tech gadget purchase — public catalog, owner-only dashboard.",
 };
 

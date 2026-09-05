@@ -47,7 +47,10 @@ export default function AuthBootstrap({ children }: { children: React.ReactNode 
   if (!ready) {
     return (
       <div className="min-h-screen flex items-center justify-center" style={{ background: 'var(--color-bg)', color: 'var(--color-text)' }}>
-        <span className="font-mono text-xs uppercase tracking-widest opacity-50">Loading…</span>
+        <div className="flex flex-col items-center justify-center p-12 gap-5 opacity-80 min-h-[200px]">
+          <div className="w-10 h-10 border-4 border-t-[var(--color-accent)] border-[var(--color-text)] animate-spin shadow-[4px_4px_0_0_var(--color-text)]"></div>
+          <div className="font-mono text-[11px] tracking-widest uppercase font-bold animate-pulse">Loading app...</div>
+        </div>
       </div>
     );
   }
