@@ -263,9 +263,9 @@ export default function GadgetTracker() {
 
 
           <section className="flex flex-wrap items-center gap-4 px-5 py-2.5 border-b-2 shrink-0 z-10 bg-[var(--color-bg)]" style={dividerColor}>
-            <div className="flex items-center gap-2 border px-2.5 min-w-[260px]" style={{ borderColor: 'var(--color-divider)', background: 'var(--color-surface)' }}>
+            <div className="flex items-center gap-2 border px-2.5 min-w-[260px] focus-within:border-[var(--color-text)] transition-colors" style={{ borderColor: 'var(--color-divider)', background: 'var(--color-surface)' }}>
               <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" style={{ opacity: 0.5 }}><circle cx="11" cy="11" r="8" /><path d="m21 21-4.3-4.3" /></svg>
-              <input className="input border-0 !bg-transparent pl-0" placeholder="Search name, brand, model" value={search} onChange={(e) => setSearch(e.target.value)} />
+              <input className="bg-transparent border-0 outline-none w-full text-[var(--color-text)] py-1.5 text-sm" placeholder="Search name, brand, model" value={search} onChange={(e) => setSearch(e.target.value)} />
             </div>
             <div className="flex flex-wrap gap-1.5 flex-1">
               {['ALL', ...cats].map((c) => (
@@ -331,20 +331,20 @@ export default function GadgetTracker() {
             })}
           </section>
 
-          <section className="flex items-center justify-between gap-5 px-5 py-3 border-t-2 shrink-0 z-10 bg-[var(--color-bg)]" style={dividerColor}>
+          <section className="flex items-center justify-between gap-5 px-5 py-1.5 border-t-2 shrink-0 z-10 bg-[var(--color-bg)]" style={dividerColor}>
             <span className="font-mono text-[11px]" style={{ color: 'color-mix(in srgb, var(--color-text) 60%, transparent)' }}>
               Showing {paginatedCatalog.length} of {filteredCatalog.length} items · page {currentPage} of {totalPages || 1}
             </span>
             <div className="flex gap-2">
               <button 
-                className="btn btn-secondary cursor-pointer hover:bg-[var(--color-accent)] hover:text-white transition-colors disabled:opacity-50 disabled:cursor-not-allowed" 
+                className="btn btn-secondary cursor-pointer hover:bg-[var(--color-accent)] hover:text-white transition-colors disabled:opacity-50 disabled:cursor-not-allowed py-1 px-3 min-h-0 text-xs" 
                 disabled={currentPage === 1}
                 onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
               >
                 Previous
               </button>
               <button 
-                className="btn btn-secondary cursor-pointer hover:bg-[var(--color-accent)] hover:text-white transition-colors disabled:opacity-50 disabled:cursor-not-allowed" 
+                className="btn btn-secondary cursor-pointer hover:bg-[var(--color-accent)] hover:text-white transition-colors disabled:opacity-50 disabled:cursor-not-allowed py-1 px-3 min-h-0 text-xs" 
                 disabled={currentPage === totalPages || totalPages === 0}
                 onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
               >
@@ -737,19 +737,10 @@ export default function GadgetTracker() {
         </main>
       )}
 
-      <footer className="flex items-center justify-between gap-5 px-5 py-1.5 border-t-2 shrink-0 z-10 bg-[var(--color-bg)]" style={dividerColor}>
+      <footer className="flex items-center justify-center px-5 py-1 border-t-2 shrink-0 z-10 bg-[var(--color-bg)]" style={dividerColor}>
         <span className="font-mono text-[9px] tracking-widest uppercase" style={{ color: 'color-mix(in srgb, var(--color-text) 50%, transparent)' }}>
           &copy; {new Date().getFullYear()} Rifat Sarker
         </span>
-        {!owner && (
-          <button 
-            className="font-mono text-[9px] tracking-widest uppercase cursor-pointer hover:text-[var(--color-accent)] border-none bg-transparent m-0 p-0" 
-            style={{ color: 'color-mix(in srgb, var(--color-text) 50%, transparent)' }}
-            onClick={() => go('login')}
-          >
-            Owner Login
-          </button>
-        )}
       </footer>
     </div>
   );
