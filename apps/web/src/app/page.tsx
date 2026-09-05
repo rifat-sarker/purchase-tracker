@@ -113,8 +113,10 @@ export default function GadgetTracker() {
   const [loginEmail, setLoginEmail] = useState('rifat@example.com');
   const [loginPassword, setLoginPassword] = useState('');
   const [loginError, setLoginError] = useState('');
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 3;
 
-  const go = (s: Screen) => setScreen(s);
+  const go = (s: Screen) => { setScreen(s); setCurrentPage(1); };
 
   const openForm = (id: string | null) => {
     const p = id ? products.find((x) => x.id === id) : null;
@@ -190,6 +192,9 @@ export default function GadgetTracker() {
     return list;
   }, [products, search, category, sort]);
 
+  const totalPages = Math.ceil(filteredCatalog.length / itemsPerPage);
+  const paginatedCatalog = filteredCatalog.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
+
   const detailP = products.find((p) => p.id === detailId) || products[0];
 
   const navItems: [string, Screen][] = owner
@@ -199,7 +204,7 @@ export default function GadgetTracker() {
   const dividerColor = { borderColor: 'var(--color-divider)' } as React.CSSProperties;
 
   return (
-    <div className="min-h-screen" style={{ background: 'var(--color-bg)', color: 'var(--color-text)' }}>
+    <div className="h-screen w-screen overflow-hidden flex flex-col" style={{ background: 'var(--color-bg)', color: 'var(--color-text)' }}>
       {/* ── header / nav (persists across every screen — this is the single page) ── */}
       <header className="flex flex-col sm:flex-row sm:items-stretch border-b-2 sticky top-0 z-10" style={{ ...dividerColor, background: 'var(--color-bg)' }}>
         <div className="flex items-baseline gap-2.5 px-5 py-3.5 sm:border-r-2 sm:min-w-[240px]" style={dividerColor}>
@@ -233,42 +238,35 @@ export default function GadgetTracker() {
 
       {/* ── CATALOG ── */}
       {screen === 'catalog' && (
-        <main>
-          <section className="grid grid-cols-1 md:grid-cols-[1.6fr_1fr] border-b-2" style={dividerColor}>
-            <div className="px-5 pt-14 pb-10 md:border-r-2" style={dividerColor}>
-              <div className="font-mono text-[11px] tracking-widest uppercase mb-4" style={{ color: 'var(--color-accent)' }}>Public catalog / read only</div>
-              <h1 className="text-[40px] md:text-[58px] leading-[1.02] mb-4 max-w-[15ch]">Every gadget I buy, logged the day I buy it.</h1>
-              <p className="text-base max-w-[54ch]" style={{ color: 'color-mix(in srgb, var(--color-text) 75%, transparent)' }}>
-                A single-owner inventory of phones, laptops, displays and the pile of cables between them. Specs, brand and ownership year are public. Price, receipts, serials and seller stay with the owner.
-              </p>
+        <main className="flex-1 flex flex-col overflow-hidden relative">
+          {/* Subtle background image pattern for the entire catalog */}
+          <div className="absolute inset-0 z-0 opacity-5 pointer-events-none" style={{ backgroundImage: 'url("https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=2000&q=80")', backgroundSize: 'cover', backgroundPosition: 'center' }}></div>
+
+          <section className="flex flex-col sm:flex-row items-start sm:items-center justify-between border-b-2 shrink-0 z-10 bg-[var(--color-bg)] px-5 py-3 gap-4" style={dividerColor}>
+            <div>
+              <div className="font-mono text-[10px] tracking-widest uppercase mb-1" style={{ color: 'var(--color-accent)' }}>Public catalog</div>
+              <h1 className="text-[20px] md:text-[24px] leading-tight m-0">Every gadget I buy, logged.</h1>
             </div>
-            <div className="grid grid-rows-2">
-              <div className="grid grid-cols-2">
-                <StatCell label="Items logged" value={products.length} borderRight />
-                <div className="p-5 border-b-2" style={dividerColor}>
-                  <div className="text-[10px] font-mono uppercase tracking-wider" style={{ color: 'color-mix(in srgb, var(--color-text) 55%, transparent)' }}>Categories</div>
-                  <div className="font-[var(--font-heading)] font-extrabold text-[38px] leading-tight mt-1.5">{cats.length}</div>
-                </div>
+            <div className="flex items-center gap-4 sm:gap-6 shrink-0">
+              <div className="flex flex-col text-right">
+                <div className="text-[9px] font-mono uppercase tracking-wider" style={{ color: 'color-mix(in srgb, var(--color-text) 55%, transparent)' }}>Items</div>
+                <div className="font-[var(--font-heading)] font-extrabold text-[18px] leading-none mt-0.5">{products.length}</div>
               </div>
-              <div className="grid grid-cols-2">
-                <div className="p-5 border-r-2" style={dividerColor}>
-                  <div className="text-[10px] font-mono uppercase tracking-wider" style={{ color: 'color-mix(in srgb, var(--color-text) 55%, transparent)' }}>Tracking since</div>
-                  <div className="font-[var(--font-heading)] font-extrabold text-[38px] leading-tight mt-1.5">2025</div>
-                </div>
-                <div className="p-5">
-                  <div className="text-[10px] font-mono uppercase tracking-wider" style={{ color: 'color-mix(in srgb, var(--color-text) 55%, transparent)' }}>Total spend</div>
-                  <div className="flex items-baseline gap-2">
-                    <div className="font-[var(--font-heading)] font-extrabold text-[38px] leading-tight mt-1.5">{owner ? money(total) : mask()}</div>
-                    {!owner && (
-                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--color-accent)" strokeWidth="2"><rect x="3" y="11" width="18" height="11" /><path d="M7 11V7a5 5 0 0 1 10 0v4" /></svg>
-                    )}
-                  </div>
+              <div className="flex flex-col text-right border-l-2 pl-4 sm:pl-6" style={dividerColor}>
+                <div className="text-[9px] font-mono uppercase tracking-wider" style={{ color: 'color-mix(in srgb, var(--color-text) 55%, transparent)' }}>Categories</div>
+                <div className="font-[var(--font-heading)] font-extrabold text-[18px] leading-none mt-0.5">{cats.length}</div>
+              </div>
+              <div className="flex flex-col text-right border-l-2 pl-4 sm:pl-6" style={dividerColor}>
+                <div className="text-[9px] font-mono uppercase tracking-wider" style={{ color: 'color-mix(in srgb, var(--color-text) 55%, transparent)' }}>Spend</div>
+                <div className="flex items-center justify-end gap-1 mt-0.5">
+                  <div className="font-[var(--font-heading)] font-extrabold text-[18px] leading-none">{owner ? money(total) : mask()}</div>
+                  {!owner && <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="var(--color-accent)" strokeWidth="2.5" className="shrink-0"><rect x="3" y="11" width="18" height="11" /><path d="M7 11V7a5 5 0 0 1 10 0v4" /></svg>}
                 </div>
               </div>
             </div>
           </section>
 
-          <section className="flex flex-wrap items-center gap-4 px-5 py-3.5 border-b-2" style={dividerColor}>
+          <section className="flex flex-wrap items-center gap-4 px-5 py-2.5 border-b-2 shrink-0 z-10 bg-[var(--color-bg)]" style={dividerColor}>
             <div className="flex items-center gap-2 border px-2.5 min-w-[260px]" style={{ borderColor: 'var(--color-divider)', background: 'var(--color-surface)' }}>
               <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" style={{ opacity: 0.5 }}><circle cx="11" cy="11" r="8" /><path d="m21 21-4.3-4.3" /></svg>
               <input className="input border-0 !bg-transparent pl-0" placeholder="Search name, brand, model" value={search} onChange={(e) => setSearch(e.target.value)} />
@@ -301,21 +299,23 @@ export default function GadgetTracker() {
             </div>
           </section>
 
-          <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 border-b-2" style={dividerColor}>
-            {filteredCatalog.map((p, i) => {
+          <section className="flex-1 min-h-0 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 z-10 bg-[var(--color-bg)] overflow-hidden" style={dividerColor}>
+            {paginatedCatalog.map((p, i) => {
               const specList = Object.entries(p.specs).slice(0, 3).map(([k, v]) => `${k} ${v}`);
               const lastCol = (i + 1) % 3 === 0;
               return (
                 <article
                   key={p.id}
                   onClick={() => { setDetailId(p.id); go('detail'); }}
-                  className={`p-5 cursor-pointer border-b-2 flex flex-col hover:[background:var(--color-neutral-100)] ${lastCol ? '' : 'lg:border-r-2'}`}
+                  className={`p-4 md:p-5 cursor-pointer border-b-2 sm:border-b-0 flex flex-col hover:[background:var(--color-neutral-100)] transition-colors h-full ${lastCol ? '' : 'lg:border-r-2'} ${(i+1) % 2 !== 0 ? 'sm:border-r-2 lg:border-r-2' : ''}`}
                   style={dividerColor}
                 >
                   {p.referenceImage ? (
-                    <img src={p.referenceImage} alt={p.name} className="h-[168px] w-full object-cover grayscale opacity-80 hover:grayscale-0 hover:opacity-100 transition-all duration-300 rounded border" style={{ borderColor: 'var(--color-divider)' }} />
+                    <div className="relative h-[120px] md:h-[160px] w-full shrink-0 overflow-hidden rounded border border-[var(--color-divider)]">
+                      <img src={p.referenceImage} alt={p.name} className="absolute inset-0 w-full h-full object-cover grayscale opacity-80 hover:grayscale-0 hover:opacity-100 hover:scale-105 transition-all duration-500" />
+                    </div>
                   ) : (
-                    <PlaceholderBox label="Product photo" className="h-42 h-[168px]" />
+                    <PlaceholderBox label="Product photo" className="h-[120px] md:h-[160px] shrink-0" />
                   )}
                   <div className="flex items-baseline justify-between gap-2.5 mt-4">
                     <span className="font-mono text-[10px] tracking-wider" style={{ color: 'var(--color-accent)' }}>{p.category}</span>
@@ -326,7 +326,7 @@ export default function GadgetTracker() {
                   <div className="flex flex-wrap gap-1.5 mt-3.5">
                     {specList.map((s) => <span key={s} className="tag tag-outline">{s}</span>)}
                   </div>
-                  <div className="flex items-center justify-between gap-2.5 mt-4 pt-3 border-t" style={dividerColor}>
+                  <div className="mt-auto flex items-center justify-between gap-2.5 pt-3 border-t" style={dividerColor}>
                     <span className="font-[var(--font-heading)] font-extrabold text-[17px]">{owner ? money(p.price, p.currency) : mask()}</span>
                     <span className="font-mono text-[11px]" style={{ color: 'color-mix(in srgb, var(--color-text) 55%, transparent)' }}>{owner ? fdate(p.purchaseDate) : 'owned since ' + p.purchaseDate.slice(0, 4)}</span>
                   </div>
@@ -335,23 +335,28 @@ export default function GadgetTracker() {
             })}
           </section>
 
-          <section className="flex items-center justify-between gap-5 px-5 py-4 border-b-2" style={dividerColor}>
-            <span className="font-mono text-[11px]" style={{ color: 'color-mix(in srgb, var(--color-text) 60%, transparent)' }}>Showing {filteredCatalog.length} of {products.length} items · page 1 · limit 10</span>
+          <section className="flex items-center justify-between gap-5 px-5 py-3 border-t-2 shrink-0 z-10 bg-[var(--color-bg)]" style={dividerColor}>
+            <span className="font-mono text-[11px]" style={{ color: 'color-mix(in srgb, var(--color-text) 60%, transparent)' }}>
+              Showing {paginatedCatalog.length} of {filteredCatalog.length} items · page {currentPage} of {totalPages || 1}
+            </span>
             <div className="flex gap-2">
-              <button className="btn btn-secondary" disabled>Previous</button>
-              <button className="btn btn-secondary" disabled>Next</button>
+              <button 
+                className="btn btn-secondary cursor-pointer hover:bg-[var(--color-accent)] hover:text-white transition-colors disabled:opacity-50 disabled:cursor-not-allowed" 
+                disabled={currentPage === 1}
+                onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+              >
+                Previous
+              </button>
+              <button 
+                className="btn btn-secondary cursor-pointer hover:bg-[var(--color-accent)] hover:text-white transition-colors disabled:opacity-50 disabled:cursor-not-allowed" 
+                disabled={currentPage === totalPages || totalPages === 0}
+                onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
+              >
+                Next
+              </button>
             </div>
           </section>
 
-          {!owner && (
-            <section className="grid grid-cols-1 md:grid-cols-[1.4fr_1fr] gap-10 items-end px-5 py-12" style={{ background: 'var(--color-accent)', color: 'var(--color-bg)' }}>
-              <h2 className="text-3xl md:text-[44px] leading-[1.05] max-w-[24ch]">Prices, receipts, serials and sellers are stripped at the serialization layer — not hidden in the browser.</h2>
-              <div>
-                <p className="text-sm opacity-90 max-w-[40ch] mb-4">One dataset, one set of routes. The response DTO decides what a visitor gets. Sign in to see the same catalog with the financial fields attached.</p>
-                <button className="btn justify-start w-[200px]" style={{ background: 'var(--color-bg)', color: 'var(--color-accent)' }} onClick={() => go('login')}>Owner sign in</button>
-              </div>
-            </section>
-          )}
         </main>
       )}
 
@@ -736,9 +741,19 @@ export default function GadgetTracker() {
         </main>
       )}
 
-      <footer className="flex items-center justify-between gap-5 px-5 py-5 border-t-2 font-mono text-[11px]" style={{ ...dividerColor, color: 'color-mix(in srgb, var(--color-text) 55%, transparent)' }}>
-        <span>Gadget Purchase Tracker — Rifat Sarker</span>
-        <span>GET /api/v1/products · {owner ? 'authenticated — full shape' : 'public — sanitized DTO'}</span>
+      <footer className="flex items-center justify-between gap-5 px-5 py-1.5 border-t-2 shrink-0 z-10 bg-[var(--color-bg)]" style={dividerColor}>
+        <span className="font-mono text-[9px] tracking-widest uppercase" style={{ color: 'color-mix(in srgb, var(--color-text) 50%, transparent)' }}>
+          &copy; {new Date().getFullYear()} Rifat Sarker
+        </span>
+        {!owner && (
+          <button 
+            className="font-mono text-[9px] tracking-widest uppercase cursor-pointer hover:text-[var(--color-accent)] border-none bg-transparent m-0 p-0" 
+            style={{ color: 'color-mix(in srgb, var(--color-text) 50%, transparent)' }}
+            onClick={() => go('login')}
+          >
+            Owner Login
+          </button>
+        )}
       </footer>
     </div>
   );
