@@ -17,12 +17,22 @@ export default function AuthBootstrap({ children }: { children: React.ReactNode 
 
   useEffect(() => {
     let cancelled = false;
+    const unblock = () => { if (!cancelled) setReady(true); };
+
+    // Hard ceiling: no single network call — a cold Vercel function, a
+    // slow database wake-up, a flaky edge hop — is allowed to freeze the
+    // entire site on this screen forever. Worst case, a slow/failed
+    // refresh just means the visitor loads as a public (logged-out) user
+    // instead of staying silently stuck.
+    const timeout = setTimeout(unblock, 4000);
+
     refresh()
       .unwrap()
       .then((data) => { if (!cancelled) dispatch(setCredentials({ accessToken: data.accessToken })); })
-      .catch(() => { /* no valid refresh cookie — stay a public visitor */ })
-      .finally(() => { if (!cancelled) setReady(true); });
-    return () => { cancelled = true; };
+      .catch(() => { /* no valid refresh cookie, or the request failed — stay a public visitor */ })
+      .finally(() => { clearTimeout(timeout); unblock(); });
+
+    return () => { cancelled = true; clearTimeout(timeout); };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 

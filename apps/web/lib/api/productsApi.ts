@@ -101,6 +101,10 @@ export const productsApi = createApi({
     // Needed so the httpOnly refresh-token cookie set by /auth/login travels
     // with /auth/refresh and /auth/logout requests.
     credentials: 'include',
+    // Hard ceiling on every request — a hung connection (cold serverless
+    // function, flaky network hop) aborts and surfaces as a normal RTK
+    // Query error instead of leaving a screen stuck in "Loading…" forever.
+    timeout: 15000,
     prepareHeaders: (headers, { getState }) => {
       const token = (getState() as RootState).auth.accessToken;
       if (token) headers.set('authorization', `Bearer ${token}`);
