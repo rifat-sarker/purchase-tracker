@@ -110,6 +110,7 @@ export default function GadgetTracker() {
   const [editingId, setEditingId] = useState<string | null>(null);
   const [form, setForm] = useState<FormState>(blankForm());
   const [specRows, setSpecRows] = useState<{ key: string; value: string }[]>([{ key: '', value: '' }]);
+  const [uploadFiles, setUploadFiles] = useState<File[]>([]);
   const [loginEmail, setLoginEmail] = useState('rifat@example.com');
   const [loginPassword, setLoginPassword] = useState('');
   const [loginError, setLoginError] = useState('');
@@ -123,6 +124,7 @@ export default function GadgetTracker() {
     setEditingId(id);
     setForm(p ? formFor(p) : blankForm());
     setSpecRows(p ? Object.entries(p.specs).map(([key, value]) => ({ key, value })) : [{ key: '', value: '' }]);
+    setUploadFiles([]);
     go('form');
   };
 
@@ -601,16 +603,43 @@ export default function GadgetTracker() {
                 <span>Editing the warranty date resets <span className="font-mono">warrantyNotified</span> to false, so the reminder fires again.</span>
               </div>
               <hr className="hr my-7" />
-              <h6 className="mb-3">Receipt / memo images — max 5, 5 MB each</h6>
-              <div className="grid grid-cols-3 gap-2.5">
-                <PlaceholderBox label="drop receipt" className="h-[74px]" />
-                <PlaceholderBox label="drop receipt" className="h-[74px]" />
-                <PlaceholderBox label="jpeg / png / webp" className="h-[74px]" />
+              <h6 className="mb-3">Product Images & Receipts</h6>
+              <div className="border-2 border-dashed rounded flex flex-col items-center justify-center p-8 cursor-pointer transition-colors hover:bg-[var(--color-surface)]" style={{ borderColor: 'var(--color-divider)' }}>
+                <input 
+                  type="file" 
+                  multiple 
+                  accept="image/*" 
+                  className="hidden" 
+                  id="multi-upload" 
+                  onChange={(e) => { if (e.target.files) setUploadFiles(Array.from(e.target.files)) }} 
+                />
+                <label htmlFor="multi-upload" className="cursor-pointer flex flex-col items-center w-full">
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" style={{ opacity: 0.5, marginBottom: 8 }}><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" /><polyline points="17 8 12 3 7 8" /><line x1="12" y1="3" x2="12" y2="15" /></svg>
+                  <span className="text-[13px] font-bold">Click to upload multiple images</span>
+                  <span className="text-[10px] mt-1" style={{ color: 'color-mix(in srgb, var(--color-text) 50%, transparent)' }}>Select receipts or product photos (max 5MB each)</span>
+                </label>
               </div>
-              <hr className="hr my-7" />
-              <h6 className="mb-3">Reference image URL</h6>
-              <input className="input" value={form.referenceImage} onChange={setF('referenceImage')} />
-              <div className="text-xs mt-1.5" style={{ color: 'color-mix(in srgb, var(--color-text) 55%, transparent)' }}>Copyright-free press or stock photo. Public.</div>
+              
+              {uploadFiles.length > 0 && (
+                <div className="flex flex-wrap gap-2.5 mt-4">
+                  {uploadFiles.map((f, i) => (
+                    <div key={i} className="relative w-[74px] h-[74px] border rounded overflow-hidden" style={{ borderColor: 'var(--color-divider)' }}>
+                      <img src={URL.createObjectURL(f)} alt="preview" className="w-full h-full object-cover grayscale opacity-90 hover:grayscale-0 hover:opacity-100 transition-all cursor-pointer" />
+                      <button 
+                        className="absolute top-1 right-1 bg-black/50 text-white rounded-full w-4 h-4 flex items-center justify-center text-[10px]"
+                        onClick={(e) => { e.preventDefault(); setUploadFiles(fs => fs.filter((_, j) => j !== i)); }}
+                      >
+                        &times;
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              )}
+
+              <div className="mt-4 pt-4 border-t-2" style={dividerColor}>
+                <h6 className="mb-3 text-[10px] uppercase opacity-70">Legacy URL Fallback (for older data)</h6>
+                <input className="input" value={form.referenceImage} onChange={setF('referenceImage')} placeholder="https://..." />
+              </div>
             </div>
           </section>
         </main>
