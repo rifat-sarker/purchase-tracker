@@ -458,7 +458,7 @@ export default function GadgetTracker() {
 
       {/* ── LOGIN ── */}
       {screen === 'login' && (
-        <main className="grid grid-cols-1 md:grid-cols-2" style={{ minHeight: 'calc(100vh - 57px)' }}>
+        <main className="grid grid-cols-1 md:grid-cols-2 flex-1 overflow-y-auto" style={{ minHeight: 'calc(100vh - 57px)' }}>
           <div className="px-5 py-16 md:border-r-2" style={dividerColor}>
             <div className="font-mono text-[11px] tracking-widest uppercase mb-5" style={{ color: 'var(--color-accent)' }}>Owner access</div>
             <h1 className="text-[32px] md:text-[46px] leading-[1.04] mb-4 max-w-[16ch]">Single account. No registration.</h1>
