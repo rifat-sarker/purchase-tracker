@@ -265,11 +265,11 @@ export default function GadgetTracker() {
 
 
           <section className="flex flex-wrap items-center gap-4 px-5 py-2.5 border-b-2 shrink-0 z-10 bg-[var(--color-bg)]" style={dividerColor}>
-            <div className="flex items-center gap-2 border border-[color:var(--color-divider)] focus-within:border-[color:var(--color-text)] px-2.5 min-w-[260px] transition-colors" style={{ background: 'var(--color-surface)' }}>
+            <div className="flex items-center gap-2 border border-[color:var(--color-divider)] focus-within:border-[color:var(--color-text)] px-2.5 w-full md:w-auto md:min-w-[260px] transition-colors" style={{ background: 'var(--color-surface)' }}>
               <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" style={{ opacity: 0.5 }}><circle cx="11" cy="11" r="8" /><path d="m21 21-4.3-4.3" /></svg>
               <input className="bg-transparent !border-0 !outline-none focus:!outline-none focus:!ring-0 focus:!border-0 !shadow-none w-full text-[var(--color-text)] py-1.5 text-sm" placeholder="Search name, brand, model" value={search} onChange={(e) => setSearch(e.target.value)} />
             </div>
-            <div className="flex flex-wrap gap-1.5 flex-1">
+            <div className="flex gap-1.5 w-full md:w-auto md:flex-1 overflow-x-auto [&::-webkit-scrollbar]:hidden" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
               {['ALL', ...cats].map((c) => (
                 <button
                   key={c}
@@ -555,7 +555,7 @@ export default function GadgetTracker() {
       {/* ── FORM (create / edit) ── */}
       {screen === 'form' && (
         <main className="flex-1 overflow-y-auto">
-          <section className="flex items-baseline justify-between gap-5 px-5 py-7 border-b-2" style={dividerColor}>
+          <section className="flex flex-col sm:flex-row sm:items-baseline justify-between gap-4 sm:gap-5 px-5 py-5 sm:py-7 border-b-2" style={dividerColor}>
             <div>
               <div className="font-mono text-[11px] tracking-wider uppercase mb-2" style={{ color: 'var(--color-accent)' }}>{editingId ? `PATCH /products/${editingId}` : 'POST /products'}</div>
               <h1 className="text-[38px] m-0">{editingId ? 'Edit entry' : 'Log a purchase'}</h1>
