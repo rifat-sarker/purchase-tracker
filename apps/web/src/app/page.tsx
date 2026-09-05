@@ -162,7 +162,7 @@ export default function GadgetTracker() {
   const [loginPassword, setLoginPassword] = useState('');
   const [errorModal, setErrorModal] = useState<string | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 6;
+  const itemsPerPage = 12;
 
   useEffect(() => {
     const t = setTimeout(() => setDebouncedSearch(search), 350);
@@ -395,34 +395,34 @@ export default function GadgetTracker() {
                   <article
                     key={p.id}
                     onClick={() => { setDetailId(p.id); go('detail'); }}
-                    className={`p-4 md:p-5 cursor-pointer border-b-2 sm:border-b-0 flex flex-col hover:[background:var(--color-neutral-100)] transition-colors h-full ${lastCol ? '' : 'lg:border-r-2'} ${(i + 1) % 2 !== 0 ? 'sm:border-r-2 lg:border-r-2' : ''}`}
+                    className={`p-3 md:p-4 cursor-pointer border-b-2 sm:border-b-0 flex flex-col hover:[background:var(--color-neutral-100)] transition-colors h-full ${lastCol ? '' : 'lg:border-r-2'} ${(i + 1) % 2 !== 0 ? 'sm:border-r-2 lg:border-r-2' : ''}`}
                     style={dividerColor}
                   >
                     {img ? (
-                      <div className="relative h-[100px] md:h-[130px] w-full shrink-0 overflow-hidden rounded border border-[var(--color-divider)]">
+                      <div className="relative aspect-[21/9] w-full shrink-0 overflow-hidden border border-[var(--color-divider)]">
                         <img src={img} alt={p.name} className="absolute inset-0 w-full h-full object-cover grayscale opacity-80 hover:grayscale-0 hover:opacity-100 hover:scale-105 transition-all duration-500" />
                       </div>
                     ) : (
-                      <PlaceholderBox label="Product photo" className="h-[100px] md:h-[130px] shrink-0" />
+                      <PlaceholderBox label="Product photo" className="aspect-[21/9] shrink-0" />
                     )}
-                    <div className="flex items-baseline justify-between gap-2.5 mt-4">
-                      <span className="font-mono text-[10px] tracking-wider" style={{ color: 'var(--color-accent)' }}>{p.category}</span>
-                      <span className="tag tag-neutral">{p.status}</span>
+                    <div className="flex items-baseline justify-between gap-2 mt-2.5 mb-1">
+                      <span className="font-mono text-[9px] tracking-wider" style={{ color: 'var(--color-accent)' }}>{p.category}</span>
+                      <span className="tag tag-neutral text-[9px] py-0.5 px-2">{p.status}</span>
                     </div>
-                    <div className="flex items-start justify-between gap-2 mt-2 mb-1">
-                      <h3 className="text-xl leading-none">{p.name}</h3>
+                    <div className="flex items-start justify-between gap-2 mb-0.5">
+                      <h3 className="text-lg leading-tight m-0">{p.name}</h3>
                       {owner && p.price !== undefined && (
-                        <span className="font-[var(--font-heading)] font-extrabold text-[15px] shrink-0 leading-none">
+                        <span className="font-[var(--font-heading)] font-extrabold text-[14px] shrink-0 leading-tight">
                           {money(p.price, p.currency)}
                         </span>
                       )}
                     </div>
-                    <div className="text-[13px]" style={{ color: 'color-mix(in srgb, var(--color-text) 60%, transparent)' }}>{[p.brand, p.model].filter(Boolean).join(' · ') || '—'}</div>
-                    <div className="font-mono text-[10px] mt-1" style={{ color: 'color-mix(in srgb, var(--color-text) 45%, transparent)' }}>
+                    <div className="text-[12px] mb-1" style={{ color: 'color-mix(in srgb, var(--color-text) 60%, transparent)' }}>{[p.brand, p.model].filter(Boolean).join(' · ') || '—'}</div>
+                    <div className="font-mono text-[9px]" style={{ color: 'color-mix(in srgb, var(--color-text) 45%, transparent)' }}>
                       {owner && p.purchaseDate ? `Purchased: ${fdate(p.purchaseDate)}` : `Owned since ${p.ownedSinceYear}`}
                     </div>
-                    <div className="flex flex-wrap gap-1.5 mt-3">
-                      {specList.map((s) => <span key={s} className="tag tag-outline">{s}</span>)}
+                    <div className="flex flex-wrap gap-1 mt-2">
+                      {specList.map((s) => <span key={s} className="tag tag-outline text-[9px] py-0.5 px-1.5">{s}</span>)}
                     </div>
                   </article>
                 );
