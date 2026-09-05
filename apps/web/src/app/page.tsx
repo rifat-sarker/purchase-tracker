@@ -356,7 +356,7 @@ export default function GadgetTracker() {
           {catalogQuery.isLoading ? (
             <StatusNote>Loading catalog…</StatusNote>
           ) : catalogQuery.isError ? (
-            <StatusNote tone="accent">Couldn&apos;t reach the API — is the backend running on :4000?</StatusNote>
+            <StatusNote tone="accent">Couldn&apos;t reach the API. <button className="underline cursor-pointer" onClick={() => catalogQuery.refetch()}>Retry</button></StatusNote>
           ) : (
             <section className="flex-1 min-h-0 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 z-10 bg-[var(--color-bg)] overflow-y-auto" style={dividerColor}>
               {catalogItems.map((p, i) => {
@@ -562,7 +562,7 @@ export default function GadgetTracker() {
         <main className="flex-1 overflow-y-auto">
           <section className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 border-b-2" style={dividerColor}>
             <StatCell label="Total spend" value={money(summaryQuery.data?.totalSpend ?? 0)} sub="BDT · all statuses" borderRight />
-            <StatCell label="Items" value={summaryQuery.data?.totalItems ?? allProducts.length} sub={`${cats.length} categories`} borderRight />
+            <StatCell label="Items" value={allProductsQuery.data?.meta.total ?? allProducts.length} sub={`${cats.length} categories`} borderRight />
             <StatCell label="Average price" value={money(summaryQuery.data?.averagePrice ?? 0)} sub="per item" borderRight />
             <StatCell label="Warranty ≤ 30 days" value={allProducts.filter((p) => { const d = daysUntil(p.warrantyExpiry); return d !== null && d >= 0 && d <= 30; }).length} sub="cron notifies daily" />
           </section>
@@ -738,7 +738,7 @@ export default function GadgetTracker() {
         <main className="flex-1 overflow-y-auto">
           <section className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 border-b-2" style={dividerColor}>
             <StatCell label="Total spend" value={money(summaryQuery.data?.totalSpend ?? 0)} sub="_sum price" borderRight />
-            <StatCell label="Items" value={summaryQuery.data?.totalItems ?? 0} sub="_count" borderRight />
+            <StatCell label="Items" value={allProductsQuery.data?.meta.total ?? 0} sub="_count" borderRight />
             <StatCell label="Average" value={money(summaryQuery.data?.averagePrice ?? 0)} sub="_avg price" borderRight />
             <StatCell label="Largest single" value={money(Math.max(...allProducts.map((p) => p.price ?? 0), 0))} sub={allProducts.slice().sort((a, b) => (b.price ?? 0) - (a.price ?? 0))[0]?.name || '—'} />
           </section>

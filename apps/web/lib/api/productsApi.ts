@@ -108,6 +108,12 @@ export const productsApi = createApi({
     },
   }),
   tagTypes: ['Product', 'Analytics'],
+  // Auto-refetch active queries when the tab regains focus or the network
+  // comes back — paired with setupListeners(store.dispatch) in store.ts.
+  // Keeps the dashboard/catalog honest without a manual reload if data
+  // changed elsewhere (another tab, the Postman collection, a teammate).
+  refetchOnFocus: true,
+  refetchOnReconnect: true,
   endpoints: (builder) => ({
     login: builder.mutation<{ accessToken: string }, { email: string; password: string }>({
       query: (body) => ({ url: '/auth/login', method: 'POST', body }),
