@@ -612,13 +612,13 @@ export default function GadgetTracker() {
             <StatCell label="Average price" value={money(summaryQuery.data?.averagePrice ?? 0)} sub="per item" borderRight />
             <StatCell label="Warranty ≤ 30 days" value={allProducts.filter((p) => { const d = daysUntil(p.warrantyExpiry); return d !== null && d >= 0 && d <= 30; }).length} sub="cron notifies daily" />
           </section>
-          <section className="flex items-center justify-between gap-4 px-5 py-3.5 border-b-2" style={dividerColor}>
+          <section className="flex flex-col sm:flex-row sm:items-center justify-between items-start gap-3 sm:gap-4 px-5 py-3.5 border-b-2" style={dividerColor}>
             <h2 className="text-[22px] m-0">Purchase log</h2>
-            <div className="flex gap-2">
-              <button className="btn btn-secondary" onClick={exportCsv}>
+            <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
+              <button className="btn btn-secondary w-full sm:w-auto justify-center" onClick={exportCsv}>
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M12 3v12" /><path d="m7 10 5 5 5-5" /><path d="M5 21h14" /></svg>Export CSV
               </button>
-              <button className="btn btn-primary" onClick={() => openForm(null)}>
+              <button className="btn btn-primary w-full sm:w-auto justify-center" onClick={() => openForm(null)}>
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M12 5v14" /><path d="M5 12h14" /></svg>Log a purchase
               </button>
             </div>

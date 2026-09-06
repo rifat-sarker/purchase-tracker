@@ -9,3 +9,6 @@
 {"timestamp":"00:09:30.747","source":"Server","level":"LOG","message":"  Reload env: .env.local"}
 {"timestamp":"00:09:30.787","source":"Server","level":"LOG","message":"✓ Compiled in 7ms"}
 {"timestamp":"00:15:13.957","source":"Browser","level":"INFO","message":"Download the React DevTools for a better development experience: https://react.dev/link/react-devtools"}
+{"timestamp":"00:18:20.232","source":"Server","level":"LOG","message":"⚠ Console Ninja Turbopack support is a PRO feature, currently available to community users while in preview"}
+{"timestamp":"00:30:35.818","source":"Server","level":"LOG","message":"✓ Compiled in 108ms"}
+{"timestamp":"00:33:29.974","source":"Browser","level":"INFO","message":"Download the React DevTools for a better development experience: https://react.dev/link/react-devtools"}

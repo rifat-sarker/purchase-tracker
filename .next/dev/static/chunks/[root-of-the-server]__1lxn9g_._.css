@@ -2678,6 +2678,10 @@
       display: block;
     }
 
+    .sm\:w-auto {
+      width: auto;
+    }
+
     .sm\:w-full {
       width: 100%;
     }
@@ -2702,8 +2706,16 @@
       align-items: baseline;
     }
 
+    .sm\:items-center {
+      align-items: center;
+    }
+
     .sm\:justify-end {
       justify-content: flex-end;
+    }
+
+    .sm\:gap-4 {
+      gap: calc(var(--spacing) * 4);
     }
 
     .sm\:gap-5 {
