@@ -212,7 +212,7 @@ var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$reduxjs$2f
 var __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$features$2f$authSlice$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/src/lib/features/authSlice.ts [app-ssr] (ecmascript)");
 ;
 ;
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:4000/api/v1';
+const API_BASE_URL = ("TURBOPACK compile-time value", "https://tracker-api.rifatsarker.com/api/v1") || 'http://localhost:4000/api/v1';
 const API_ORIGIN = API_BASE_URL.replace(/\/api\/v1\/?$/, '');
 function resolveImageUrl(url) {
     if (!url) return undefined;
