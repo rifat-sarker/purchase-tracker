@@ -162,7 +162,7 @@ export default function GadgetTracker() {
   const [loginPassword, setLoginPassword] = useState('');
   const [errorModal, setErrorModal] = useState<string | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 12;
+  const itemsPerPage = 6;
 
   useEffect(() => {
     const t = setTimeout(() => setDebouncedSearch(search), 350);
